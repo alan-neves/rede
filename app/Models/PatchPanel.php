@@ -20,7 +20,7 @@ class PatchPanel extends Model
 
     public function salas()
     {
-        return $this->belongsToMany(Sala::class)->withPivot('porta');
+        return $this->belongsToMany(Sala::class)->withPivot(['porta', 'user_id']);
     }
 
     public function salasVinculadas()

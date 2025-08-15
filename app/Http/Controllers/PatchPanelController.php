@@ -63,6 +63,17 @@ class PatchPanelController extends Controller
         return redirect("/patch-panels/{$patchPanel->id}");
     }
 
+    public function tipoVinculo(PatchPanel $patchPanel, Request $request)
+    {
+        Gate::authorize('admin');
+        $porta = $request->query('porta');
+
+        return view('patch-panels.tipo-de-vinculo', [
+            'patchPanel' => $patchPanel,
+            'porta' => $porta
+        ]);
+    }
+
     public function selecionarSala(PatchPanel $patchPanel, Request $request)
     {
         Gate::authorize('admin');
@@ -70,7 +81,7 @@ class PatchPanelController extends Controller
 
         $salasPredio = Sala::where('predio_id', $patchPanel->rack->predio_id)->get();
 
-        return view('patch-panels.selecionar-sala', [
+        return view('selecionar.selecionar-sala', [
             'patchPanel' => $patchPanel,
             'salasPredio' => $salasPredio,
             'porta' => $porta
@@ -80,7 +91,10 @@ class PatchPanelController extends Controller
     public function vincularSala(VincularPortaRequest $request, PatchPanel $patchPanel)
     {
         Gate::authorize('admin');
-        $patchPanel->salas()->attach($request->sala_id, ['porta' => $request->porta]);
+        $patchPanel->salas()->attach($request->sala_id, [
+            'porta' => $request->porta,
+            'user_id' => auth()->id()
+        ]);
         session()->flash('alert-success', 'Porta vinculada com sucesso!');
         return redirect("/patch-panels/{$patchPanel->id}");
     }

@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('patch_panel_sala', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('patch_panel_id')->constrained()->onDelete('cascade');
-            $table->foreignId('sala_id')->constrained()->onDelete('cascade');
+            $table->foreignId('patch_panel_id')->constrained();
+            $table->foreignId('sala_id')->constrained();
+            $table->foreignId('user_id')->constrained('users');
             $table->integer('porta');
             $table->timestamps();
         });

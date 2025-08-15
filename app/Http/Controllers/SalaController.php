@@ -77,7 +77,7 @@ class SalaController extends Controller
         Gate::authorize('admin');
         $racks = $sala->predio->racks;
 
-        return view('salas.selecionar-rack', [
+        return view('selecionar.selecionar-rack', [
             'sala' => $sala,
             'racks' => $racks
         ]);
@@ -92,7 +92,7 @@ class SalaController extends Controller
             }])
             ->get();
 
-        return view('salas.selecionar-patchpanel', [
+        return view('selecionar.selecionar-patchpanel', [
             'sala' => $sala,
             'rack' => $rack,
             'patchPanels' => $patchPanelsDisponiveis,

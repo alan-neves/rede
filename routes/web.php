@@ -52,6 +52,7 @@ Route::put('/equipamentos/{equipamento}', [EquipamentoController::class, 'update
 Route::delete('/equipamentos/{equipamento}', [EquipamentoController::class, 'destroy']);
 
 // Vincular portas de patch panels a salas
+route::get('link para escolher o tipo de vinculo', [PatchPanelController::class, 'tipoVinculo']);
 Route::get('/patch-panels/{patchPanel}/selecionar-sala', [PatchPanelController::class, 'selecionarSala']);
 Route::post('/patch-panels/{patchPanel}/vincular-sala', [PatchPanelController::class, 'vincularSala']);
 Route::delete('/patch-panels/{patchPanel}/desvincular-sala/{sala}', [PatchPanelController::class, 'desvincularSala']);
@@ -63,6 +64,7 @@ Route::post('/salas/{sala}/vincular-patchpanel', [SalaController::class, 'vincul
 Route::delete('/salas/{sala}/desvincular-patchpanel/{patchPanel}', [SalaController::class, 'desvincularPatchPanel']);
 
 // Vincular portas de equipamento a patch panels
-Route::get('/equipamentos/{equipamento}/portas/{porta}/vincular', [EquipamentoController::class, 'selecionarPatchPanel']);
-Route::post('/equipamentos/{equipamento}/portas/{porta}/vincular', [EquipamentoController::class, 'vincularPatchPanel']);
-Route::delete('/equipamentos/{equipamento}/portas/{porta}/desvincular/{patchPanelPorta}', [EquipamentoController::class, 'desvincularPatchPanel']);
+Route::get('/equipamentos/{equipamento}/selecionar-rack', [EquipamentoController::class, 'selecionarRack']);
+Route::get('/equipamentos/{equipamento}/selecionar-patchpanel/{rack}', [EquipamentoController::class, 'selecionarPatchPanel']);
+Route::post('/equipamentos/{equipamento}/vincular-patchpanel', [EquipamentoController::class, 'vincularPatchPanel']);
+Route::delete('/equipamentos/{equipamento}/desvincular-porta/{porta}', [EquipamentoController::class, 'desvincularPatchPanel']);

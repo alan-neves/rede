@@ -19,6 +19,6 @@ class Sala extends Model
 
     public function patchPanels()
     {
-        return $this->belongsToMany(PatchPanel::class)->withPivot('porta');
+        return $this->belongsToMany(PatchPanel::class)->withPivot(['porta', 'user_id']);
     }
 }

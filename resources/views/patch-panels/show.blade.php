@@ -32,7 +32,7 @@
                             <tr>
                                 <th width="100px">Porta</th>
                                 <th>Status</th>
-                                <th>Sala Vinculada</th>
+                                <th>Vinculada a</th>
                                 <th width="180px">Ações</th>
                             </tr>
                         </thead>

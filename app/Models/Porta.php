@@ -33,4 +33,10 @@ class Porta extends Model
         return $this->belongsToMany(Porta::class, 'equipamento_patch_panel', 'equipamento_porta_id', 'patch_panel_porta_id')
             ->withPivot('user_id', 'created_at');
     }
+
+    public function patchPanelPorta()
+    {
+        return $this->belongsToMany(Porta::class, 'equipamento_patch_panel', 'equipamento_porta_id', 'patch_panel_porta_id')
+            ->withPivot('user_id', 'created_at');
+    }
 }

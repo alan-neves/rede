@@ -25,9 +25,9 @@
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h2 class="h5 mb-0">Equipamentos</h2>
                         @can('user')
-                        <!-- <a href="/equipamentos/create?rack_id={{ $rack->id }}" class="btn btn-success btn-sm"> -->
-                        <!--     <i class="fas fa-plus"></i> Novo -->
-                        <!-- </a> -->
+                        <a href="/equipamentos/create?rack_id={{ $rack->id }}" class="btn btn-success btn-sm"> 
+                        <i class="fas fa-plus"></i> Novo 
+                        </a> 
                         @endcan
                     </div>
                     <div class="card-body">

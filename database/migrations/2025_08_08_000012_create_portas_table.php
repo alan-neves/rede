@@ -19,6 +19,7 @@ class CreatePortasTable extends Migration
             $table->string('porta');
             $table->string('tipo')->nullable();
             $table->foreignId('equipamento_id')->constrained();
+            $table->foreignId('user_id')->constrained('users');
         });
     }
 

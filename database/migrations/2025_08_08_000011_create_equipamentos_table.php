@@ -20,10 +20,12 @@ class CreateEquipamentosTable extends Migration
             $table->string('model');
             $table->string('ip');
             $table->string('poe_type');
+            $table->string('patrimonio')->nullable();
             $table->integer('qtde_portas');
 
             $table->foreignId('predio_id')->nullable()->constrained();
             $table->foreignId('rack_id')->nullable()->constrained();
+            $table->foreignId('user_id')->constrained('users');
 
         });
     }
