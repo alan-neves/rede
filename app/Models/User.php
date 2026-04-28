@@ -11,7 +11,10 @@ use \Uspdev\SenhaunicaSocialite\Traits\HasSenhaunica;
 
 class User extends Authenticatable
 {
+    use \Spatie\Permission\Traits\HasRoles;
     use HasFactory, Notifiable, HasRoles, HasSenhaunica;
+    
+    protected $guard_name = 'senhaunica';
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +25,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'codpes'
     ];
 
     /**
