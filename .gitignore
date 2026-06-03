@@ -15,5 +15,5 @@ yarn-error.log
 /.vscode
 .env
 /public/vendor
-.env.testing
+.env.dusk.local
 .phpunit.cache

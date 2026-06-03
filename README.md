@@ -31,80 +31,103 @@ Sistema para gerenciamento de infraestrutura de rede da FFLCH (prédios, salas, 
 - **Autenticação**: SenhaÚnica USP + Spatie Permission
 - **Testes**: Laravel Dusk (testes de interface)
 
-### Requisitos
+## Instalação
 
-- PHP 8.1+
-- Composer
-- MariaDB / MySQL
-- Git
-- Chrome/Chromium (para testes Dusk)
+### 1. Clone o repositório
 
-### Configuração do Ambiente de Desenvolvimento
-Gerar chave:
-```php
-php artisan key:generate
+```
+git clone LINK
+
+cd rede
 ```
 
-Configurar .env:
-```php
+### 2. Build da imagem Docker
+
+```
+docker build --no-cache -t rede .
+```
+
+### 3. Configure o ambiente
+
+```
 cp .env.example .env
 ```
 
-Instalar dependências:
-```php
-composer install
+Edite o `.env` e ajuste as variáveis necessárias, especialmente:
+
+```
+DB_HOST=rede_mariadb          # nome do serviço no docker-compose
+DB_DATABASE=rede
+DB_USERNAME=rede
+DB_PASSWORD=rede
+
+SENHAUNICA_KEY=               # credenciais da Senha Única USP
+SENHAUNICA_SECRET=
+SENHAUNICA_CALLBACK_ID=
+SENHAUNICA_ADMINS=            # número(s) USP dos administradores
 ```
 
-Executar migrações:
-```php
-php artisan migrate
+### 4. Suba os containers
+
+```
+docker compose up -d
 ```
 
-## Rodando testes com Dusk (testes de cobertura)
+### 5. Gere a chave da aplicação
 
-Os testes com **Laravel Dusk** foram desenvolvidos com dois propósitos:
+```
+docker exec -it rede php artisan key:generate
+```
 
-1. **Testar funcionalidades reais do sistema**, simulando a interação de um usuário no navegador.
-2. **Servir como documentação funcional**, demonstrando como as principais funcionalidades do sistema devem se comportar.
+### 6. Execute as migrations
 
-A seguir estão os passos para executar o Dusk **em modo assistido**, ou seja, diretamente na sua máquina. Nesse modo é possível **visualizar o navegador Chrome virtual executando os testes**, o que facilita a depuração.
+```
+docker exec -it rede php artisan migrate
+```
 
-Por esse motivo, neste caso **não executamos os testes em container**.
+A aplicação estará disponível em http://127.0.0.1:8000.
 
-Entretanto, na pasta **`.github/workflows`** os testes também foram configurados para rodar automaticamente no **GitHub Actions**, garantindo que falhas nos testes sejam detectadas durante novos commits ou pull requests.
+## Testes com Dusk
 
+### 1. Crie o banco de dados de testes
 
-### 1. Criar o arquivo de ambiente de testes
+```
+docker compose exec rede_mariadb mariadb -u root -prede \
+  -e "CREATE DATABASE IF NOT EXISTS rede_dusk;"
 
-Copie o arquivo de exemplo:
+docker compose exec rede_mariadb mariadb -u root -prede \
+  -e "GRANT ALL PRIVILEGES ON rede_dusk.* TO 'rede'@'%'; FLUSH PRIVILEGES;"
+```
 
-    cp .env.testing.example .env.testing
+### 2. Configure o ambiente Dusk
 
-### 2. Criar o arquivo de ambiente de testes
+```
+cp .env.dusk.local.example .env.dusk.local
+```
 
-Edite o arquivo .env.testing e configure pelo menos as variáveis de banco de dados:
+Edite o `.env.dusk.local` e cole o valor de `APP_KEY` do seu `.env`:
 
-    DB_DATABASE=salas_dusk
-    DB_USERNAME=admin
-    DB_PASSWORD=admin
+```
+APP_KEY=    # copie do seu .env
+```
 
-### 3. Configurar a porta da aplicação
+Confirme também que a variável `DUSK_DRIVER_URL` aponta para o Selenium:
 
-Os testes serão executados na porta 47800. Caso prefira utilizar outra porta, basta alterar o valor de APP_URL.
+```
+DUSK_DRIVER_URL=http://rede_selenium:4444
+```
 
+### 3. Execute as migrations no banco de testes
 
-### 4. Preparar o ambiente de testes
+```
+docker exec -it rede php artisan migrate --env=dusk.local
+```
 
-    composer install
-    php artisan key:generate --env=testing
-    php artisan migrate:fresh --env=testing
-    php artisan serve --port=47800 --env=testing
+### 4. Execute os testes
 
-### 5. Executar os testes do Dusk
-
-Durante a execução, o navegador Chrome controlado pelo Laravel Dusk abrirá automaticamente e realizará as interações definidas nos testes.
-
-    php artisan dusk --env=testing
+```
+docker exec -it rede php artisan dusk
+```
 
 ### Novos testes
 
