@@ -40,6 +40,12 @@ abstract class DuskTestCase extends BaseTestCase
             ]);
         })->all());
 
+        $options->setExperimentalOption('prefs', [
+            'credentials_enable_service' => false,
+            'profile.password_manager_enabled' => false,
+            'profile.password_manager_leak_detection' => false,
+        ]);
+        
         return RemoteWebDriver::create(
             $_ENV['DUSK_DRIVER_URL'] ?? env('DUSK_DRIVER_URL') ?? 'http://localhost:9515',
             DesiredCapabilities::chrome()->setCapability(

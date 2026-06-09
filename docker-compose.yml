@@ -1,0 +1,52 @@
+services:
+  rede:
+    build: .
+    image: rede:latest
+    container_name: rede
+    ports:
+      - "8000:80"
+    depends_on:
+      - mariadb
+    networks:
+      - rede-network
+    volumes:
+      - ./:/var/www/html
+    environment:
+      HOME: /tmp
+    user: "${UID:-1000}:${GID:-1000}"
+
+  mariadb:
+    image: mariadb:11
+    container_name: rede_mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: rede
+      MYSQL_USER: rede
+      MYSQL_PASSWORD: rede
+      MYSQL_ROOT_PASSWORD: rede
+    networks:
+      - rede-network
+
+  selenium:
+    image: selenium/standalone-chrome
+    container_name: rede_selenium
+    ports:
+      - "7900:7900" # VNC (pra ver o browser rodando)
+    networks:
+      - rede-network
+    shm_size: 2gb
+
+  senhaunica-faker:
+    image: uspdev/senhaunica-faker
+    container_name: rede_senhaunica-faker
+    ports:
+      - "3141:3141"
+    environment:
+          - APP_URL=http://auth.local:3141
+    networks:
+      rede-network:
+        aliases:
+          - auth.local
+
+networks:
+  rede-network:

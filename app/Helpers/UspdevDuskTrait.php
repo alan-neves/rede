@@ -17,14 +17,14 @@ trait UspdevDuskTrait
 
         $this->commonUser = User::firstOrCreate(
             ['email' => 'user@test.com'],
-            ['name' => 'Dusk User', 'password' => bcrypt('password')]
+            ['name' => 'Dusk User', 'password' => bcrypt('password'), 'local' => 1]
         );
-        $this->commonUser->givePermissionTo('user', 'senhaunica');
+        $this->commonUser->givePermissionTo('user');
 
         $this->adminUser = User::firstOrCreate(
             ['email' => 'admin@test.com'],
-            ['name' => 'Dusk Admin', 'password' => bcrypt('password')]
+            ['name' => 'Dusk Admin', 'password' => bcrypt('password'), 'local' => 1]
         );
-        $this->adminUser->givePermissionTo('admin', 'senhaunica');
+        $this->adminUser->givePermissionTo('admin');
     }
 }
