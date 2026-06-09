@@ -1,5 +1,6 @@
 services:
   rede:
+    build: .
     image: rede:latest
     container_name: rede
     ports:
@@ -23,8 +24,6 @@ services:
       MYSQL_USER: rede
       MYSQL_PASSWORD: rede
       MYSQL_ROOT_PASSWORD: rede
-    volumes:
-      - mariadb_data:/var/lib/mysql
     networks:
       - rede-network
 
@@ -51,6 +50,3 @@ services:
 
 networks:
   rede-network:
-
-volumes:
-  mariadb_data:
