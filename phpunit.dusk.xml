@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         beStrictAboutTestsThatDoNotTestAnything="false"
+         colors="true"
+         processIsolation="false"
+         stopOnError="false"
+         stopOnFailure="false"
+         cacheDirectory=".phpunit.cache"
+         backupStaticProperties="false">
+    <testsuites>
+        <testsuite name="Browser Test Suite">
+            <file>./tests/Browser/IndexTest.php</file>
+            <file>./tests/Browser/LoginLogoutTest.php</file>
+            <file>./tests/Browser/CriarPredioTest.php</file>
+            <file>./tests/Browser/CriarSalaTest.php</file>
+            <file>./tests/Browser/CriarRackTest.php</file>
+            <file>./tests/Browser/CriarPatchPanelTest.php</file>
+            <file>./tests/Browser/CriarTipoPortaTest.php</file>
+        </testsuite>
+    </testsuites>
+</phpunit>
