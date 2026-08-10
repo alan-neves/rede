@@ -24,6 +24,24 @@ services:
       MYSQL_USER: rede
       MYSQL_PASSWORD: rede
       MYSQL_ROOT_PASSWORD: rede
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - rede-network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: rede_phpmyadmin
+    restart: always
+    depends_on:
+      - mariadb
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: rede
     networks:
       - rede-network
 
@@ -31,11 +49,13 @@ services:
     image: selenium/standalone-chrome
     container_name: rede_selenium
     ports:
-      - "7900:7900" # VNC (pra ver o browser rodando)
+      - "7900:7900"
     networks:
       - rede-network
     shm_size: 2gb
 
+  # No /etc/hosts do seu computador colocar a linha `127.0.0.1 auth.local`
+  # particularidades do protocolo oAuth1 usado na USP
   senhaunica-faker:
     image: uspdev/senhaunica-faker
     container_name: rede_senhaunica-faker
@@ -48,5 +68,18 @@ services:
         aliases:
           - auth.local
 
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: rede_mailpit
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Interface Web
+    networks:
+      - rede-network
+
 networks:
   rede-network:
+
+volumes:
+  mariadb_data:
+
