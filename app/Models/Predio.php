@@ -26,4 +26,9 @@ class Predio extends Model
     {
         return $this->hasMany(Equipamento::class);
     }
+
+    public function plantas()
+    {
+        return $this->hasMany(Planta::class);
+    }
 }

@@ -2,11 +2,6 @@
 
 @section('content')
 
-@can('user')
-@include('partials.search') 
-@endcan
-<br>
-
 <div class="card">
     <div class="card-header bg-usp">
         <div class="d-flex justify-content-between align-items-center">
@@ -124,5 +119,7 @@
             </div>
         </div>
     </div>
+    @include('plantas.form')
+    <a href="/plantas/{{ $predio->id }}" class="btn btn-primary mb-3">Ver Plantas</a>
 </div>
 @endsection

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "543c37c1fd65a9486385d529ca71bc23",
+    "content-hash": "132783d8992894c21e9e6dbe6c12f780",
     "packages": [
         {
             "name": "brick/math",
@@ -7014,6 +7014,59 @@
             "time": "2026-03-20T14:12:15+00:00"
         },
         {
+            "name": "uspdev/simple-crud-generator",
+            "version": "1.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/uspdev/simple-crud-generator.git",
+                "reference": "c1dab3618f28cd485106bfc2824d3bf69d521a71"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/uspdev/simple-crud-generator/zipball/c1dab3618f28cd485106bfc2824d3bf69d521a71",
+                "reference": "c1dab3618f28cd485106bfc2824d3bf69d521a71",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^10.0|^11.0|^12|^13",
+                "php": "^8.1",
+                "uspdev/laravel-usp-theme": "^2",
+                "uspdev/senhaunica-socialite": "^4"
+            },
+            "require-dev": {
+                "laravel/dusk": "^8.6"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Uspdev\\SimpleCrudGenerator\\SimpleCrudGeneratorServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Uspdev\\SimpleCrudGenerator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thiago Gomes Verissimo",
+                    "email": "verissimotgv@gmail.com"
+                }
+            ],
+            "description": "Gerador de CRUD automatizado para projetos da USPdev.",
+            "support": {
+                "issues": "https://github.com/uspdev/simple-crud-generator/issues",
+                "source": "https://github.com/uspdev/simple-crud-generator/tree/1.0.9"
+            },
+            "time": "2026-08-14T20:56:04+00:00"
+        },
+        {
             "name": "uspdev/utils",
             "version": "1.1.1",
             "source": {
@@ -9976,5 +10029,5 @@
         "php": "^8.3"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }

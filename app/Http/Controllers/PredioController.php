@@ -57,6 +57,12 @@ class PredioController extends Controller
     public function destroy(Predio $predio)
     {
         Gate::authorize('admin');
+
+        foreach($predio->plantas as $planta) {
+            session()->flash('alert-danger', 'Prédio não deletado, pois possui plantas cadastradas!');
+            return back();
+        }
+
         if($predio->salas->isEmpty() && $predio->racks->isEmpty()) {
             $predio->delete();
             session()->flash('alert-success', 'Prédio removido com sucesso!');

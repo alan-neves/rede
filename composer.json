@@ -12,6 +12,7 @@
         "uspdev/laravel-usp-theme": "^2.8",
         "uspdev/replicado": "^1.27",
         "uspdev/senhaunica-socialite": "^4.5.8",
+        "uspdev/simple-crud-generator": "^1.0",
         "uspdev/utils": "^1.0.7"
     },
     "require-dev": {

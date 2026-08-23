@@ -8,6 +8,7 @@ use App\Http\Controllers\SalaController;
 use App\Http\Controllers\RackController;
 use App\Http\Controllers\PatchPanelController;
 use App\Http\Controllers\TipoPortaController; 
+use App\Http\Controllers\PlantaController; 
 
 Route::get('/',[IndexController::class,'index']);
 
@@ -60,6 +61,12 @@ Route::get('/tipo-portas/{tipoPorta}', [TipoPortaController::class, 'show']);
 Route::get('/tipo-portas/{tipoPorta}/edit', [TipoPortaController::class, 'edit']);
 Route::put('/tipo-portas/{tipoPorta}', [TipoPortaController::class, 'update']);
 Route::delete('/tipo-portas/{tipoPorta}', [TipoPortaController::class, 'destroy']);
+
+// Plantas
+Route::post('/plantas/{predio}', [PlantaController::class, 'store']);
+Route::get('/plantas/{predio}/{planta}', [PlantaController::class, 'show']);
+Route::get('/plantas/{predio}', [PlantaController::class, 'index']);
+Route::delete('/plantas/{predio}/{planta}', [PlantaController::class, 'destroy']);
 
 // Vincular portas de patch panels a salas
 Route::get('/patch-panels/{patchPanel}/selecionar-sala', [PatchPanelController::class, 'selecionarSala']);

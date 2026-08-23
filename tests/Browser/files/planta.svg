@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .wall-thick { stroke: #1e293b; stroke-width: 8; stroke-linecap: square; stroke-linejoin: round; fill: none; }
+      .wall-thin { stroke: #334155; stroke-width: 5; stroke-linecap: square; stroke-linejoin: round; fill: none; }
+      .door-arc { stroke: #f59e0b; stroke-width: 2; stroke-dasharray: 4,4; fill: none; }
+      .door-panel { stroke: #d97706; stroke-width: 4; stroke-linecap: round; }
+      .window { stroke: #38bdf8; stroke-width: 6; stroke-linecap: round; }
+      .room-bg-1 { fill: #eff6ff; }
+      .room-bg-2 { fill: #f0fdf4; }
+      .room-bg-3 { fill: #fefce8; }
+      .room-bg-4 { fill: #faf5ff; }
+      .room-bg-5 { fill: #fff1f2; }
+      .room-bg-6 { fill: #f0fdfa; }
+      .corridor-bg { fill: #f1f5f9; }
+      .label-title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; font-weight: bold; fill: #0f172a; text-anchor: middle; }
+      .label-dim { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle; }
+      .header-title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 24px; font-weight: bold; fill: #0f172a; letter-spacing: 1px; }
+      .header-sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; fill: #64748b; }
+      .grid-line { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 2,2; }
+      .north-arrow { fill: #1e293b; }
+    </style>
+  </defs>
+
+  <!-- Fundo do Canvas -->
+  <rect width="1000" height="700" class="bg" />
+
+  <!-- Cabeçalho -->
+  <g transform="translate(60, 50)">
+    <text x="0" y="0" class="header-title">Universidade de São Paulo</text>
+    <text x="0" y="20" class="header-sub">Prédio Central - Primeiro Andar</text>
+  </g>
+
+  <!-- Grupo Principal da Planta (Offset para centralizar) -->
+  <g transform="translate(60, 100)">
+
+    <!-- PREENCHIMENTO DOS CÔMODOS (PISOS) -->
+    <!-- Corredor Central (x:0 a 880, y:220 a 300) -->
+    <rect x="0" y="220" width="880" height="80" class="corridor-bg" />
+
+    <!-- Fileira Superior (Salas 1, 2, 3) -->
+    <!-- Sala 1: Recepção (x:0 a 280, y:0 a 220) -->
+    <rect x="0" y="0" width="280" height="220" class="room-bg-1" />
+    <!-- Sala 2: Sala de Reuniões (x:280 a 600, y:0 a 220) -->
+    <rect x="280" y="0" width="320" height="220" class="room-bg-2" />
+    <!-- Sala 3: Diretoria (x:600 a 880, y:0 a 220) -->
+    <rect x="600" y="0" width="280" height="220" class="room-bg-3" />
+
+    <!-- Fileira Inferior (Salas 4, 5, 6) -->
+    <!-- Sala 4: Escritório A (x:0 a 240, y:300 a 500) -->
+    <rect x="0" y="300" width="240" height="200" class="room-bg-4" />
+    <!-- Sala 5: Escritório B / Staff (x:240 a 580, y:300 a 500) -->
+    <rect x="240" y="300" width="340" height="200" class="room-bg-5" />
+    <!-- Sala 6: Arquivo / Depósito (x:580 a 880, y:300 a 500) -->
+    <rect x="580" y="300" width="300" height="200" class="room-bg-6" />
+
+
+    <!-- JANELAS (Linhas Azuis nas paredes externas) -->
+    <!-- Janelas Parede Superior (y=0) -->
+    <line x1="80" y1="0" x2="200" y2="0" class="window" />
+    <line x1="360" y1="0" x2="520" y2="0" class="window" />
+    <line x1="680" y1="0" x2="800" y2="0" class="window" />
+
+    <!-- Janelas Parede Inferior (y=500) -->
+    <line x1="60" y1="500" x2="180" y2="500" class="window" />
+    <line x1="310" y1="500" x2="510" y2="500" class="window" />
+    <line x1="650" y1="500" x2="810" y2="500" class="window" />
+
+    <!-- Janela Corredor Esquerda (x=0, y=240 a 280) -->
+    <line x1="0" y1="240" x2="0" y2="280" class="window" />
+    <!-- Entrada Principal / Porta Dupla na Direita do Corredor (x=880, y=230 a 290) -->
+    <line x1="880" y1="230" x2="880" y2="290" stroke="#f8fafc" stroke-width="10" /> <!-- Vão da porta principal -->
+
+
+    <!-- PORTAS DAS SALAS (Arcos de Abertura + Painel da Porta) -->
+    
+    <!-- Entrada Principal (Entrada do Corredor à direita) -->
+    <g id="main-entrance">
+      <path d="M 880,230 A 30,30 0 0,0 850,260" class="door-arc" />
+      <line x1="880" y1="230" x2="850" y2="260" class="door-panel" />
+      <path d="M 880,290 A 30,30 0 0,1 850,260" class="door-arc" />
+      <line x1="880" y1="290" x2="850" y2="260" class="door-panel" />
+    </g>
+
+    <!-- Porta Sala 1 (Paredes em y=220, x=50 a 90) -->
+    <g id="door-room1">
+      <line x1="50" y1="220" x2="90" y2="220" stroke="#eff6ff" stroke-width="10" /> <!-- Abertura na parede -->
+      <path d="M 50,220 A 40,40 0 0,0 50,180" class="door-arc" />
+      <line x1="50" y1="220" x2="50" y2="180" class="door-panel" />
+    </g>
+
+    <!-- Porta Sala 2 (Paredes em y=220, x=330 a 370) -->
+    <g id="door-room2">
+      <line x1="330" y1="220" x2="370" y2="220" stroke="#f0fdf4" stroke-width="10" />
+      <path d="M 330,220 A 40,40 0 0,0 330,180" class="door-arc" />
+      <line x1="330" y1="220" x2="330" y2="180" class="door-panel" />
+    </g>
+
+    <!-- Porta Sala 3 (Paredes em y=220, x=640 a 680) -->
+    <g id="door-room3">
+      <line x1="640" y1="220" x2="680" y2="220" stroke="#fefce8" stroke-width="10" />
+      <path d="M 640,220 A 40,40 0 0,0 640,180" class="door-arc" />
+      <line x1="640" y1="220" x2="640" y2="180" class="door-panel" />
+    </g>
+
+    <!-- Porta Sala 4 (Paredes em y=300, x=40 a 80) -->
+    <g id="door-room4">
+      <line x1="40" y1="300" x2="80" y2="300" stroke="#faf5ff" stroke-width="10" />
+      <path d="M 40,300 A 40,40 0 0,1 40,340" class="door-arc" />
+      <line x1="40" y1="300" x2="40" y2="340" class="door-panel" />
+    </g>
+
+    <!-- Porta Sala 5 (Paredes em y=300, x=280 a 320) -->
+    <g id="door-room5">
+      <line x1="280" y1="300" x2="320" y2="300" stroke="#fff1f2" stroke-width="10" />
+      <path d="M 280,300 A 40,40 0 0,1 280,340" class="door-arc" />
+      <line x1="280" y1="300" x2="280" y2="340" class="door-panel" />
+    </g>
+
+    <!-- Porta Sala 6 (Paredes em y=300, x=620 a 660) -->
+    <g id="door-room6">
+      <line x1="620" y1="300" x2="660" y2="300" stroke="#f0fdfa" stroke-width="10" />
+      <path d="M 620,300 A 40,40 0 0,1 620,340" class="door-arc" />
+      <line x1="620" y1="300" x2="620" y2="340" class="door-panel" />
+    </g>
+
+
+    <!-- PAREDES (Desenhadas por cima dos preenchimentos para acabamento limpo) -->
+    
+    <!-- Paredes Externas Perimetrais (Espessura Maior) -->
+    <rect x="0" y="0" width="880" height="500" class="wall-thick" />
+
+    <!-- Paredes Internas do Corredor (Horizontais) -->
+    <!-- Corredor Superior y=220 -->
+    <line x1="0" y1="220" x2="50" y2="220" class="wall-thin" />
+    <line x1="90" y1="220" x2="330" y2="220" class="wall-thin" />
+    <line x1="370" y1="220" x2="640" y2="220" class="wall-thin" />
+    <line x1="680" y1="220" x2="880" y2="220" class="wall-thin" />
+
+    <!-- Corredor Inferior y=300 -->
+    <line x1="0" y1="300" x2="40" y2="300" class="wall-thin" />
+    <line x1="80" y1="300" x2="280" y2="300" class="wall-thin" />
+    <line x1="320" y1="300" x2="620" y2="300" class="wall-thin" />
+    <line x1="660" y1="300" x2="880" y2="300" class="wall-thin" />
+
+    <!-- Divisórias Verticais Superiores -->
+    <line x1="280" y1="0" x2="280" y2="220" class="wall-thin" />
+    <line x1="600" y1="0" x2="600" y2="220" class="wall-thin" />
+
+    <!-- Divisórias Verticais Inferiores -->
+    <line x1="240" y1="300" x2="240" y2="500" class="wall-thin" />
+    <line x1="580" y1="300" x2="580" y2="500" class="wall-thin" />
+
+
+    <!-- IDENTIFICAÇÃO DOS ESPAÇOS E DIMENSÕES -->
+    
+    <!-- Sala 1 -->
+    <text x="140" y="100" class="label-title">SALA 1: RECEPÇÃO</text>
+    <text x="140" y="125" class="label-dim">5.60 m x 4.40 m (24.6 m²)</text>
+
+    <!-- Sala 2 -->
+    <text x="440" y="100" class="label-title">SALA 2: REUNIÕES</text>
+    <text x="440" y="125" class="label-dim">6.40 m x 4.40 m (28.1 m²)</text>
+
+    <!-- Sala 3 -->
+    <text x="740" y="100" class="label-title">SALA 3: DIRETORIA</text>
+    <text x="740" y="125" class="label-dim">5.60 m x 4.40 m (24.6 m²)</text>
+
+    <!-- Corredor -->
+    <text x="440" y="265" class="label-title" style="fill: #475569; letter-spacing: 2px;">CORREDOR CENTRAL DE CIRCULAÇÃO</text>
+
+    <!-- Sala 4 -->
+    <text x="120" y="395" class="label-title">SALA 4: ATENDIMENTO</text>
+    <text x="120" y="420" class="label-dim">4.80 m x 4.00 m (19.2 m²)</text>
+
+    <!-- Sala 5 -->
+    <text x="410" y="395" class="label-title">SALA 5: STAFF / OPERACIONAL</text>
+    <text x="410" y="420" class="label-dim">6.80 m x 4.00 m (27.2 m²)</text>
+
+    <!-- Sala 6 -->
+    <text x="730" y="395" class="label-title">SALA 6: ARQUIVO / T.I.</text>
+    <text x="730" y="420" class="label-dim">6.00 m x 4.00 m (24.0 m²)</text>
+
+
+    <!-- LEGENDA DAS DIMENSÕES EXTERNAS (Cotas decorativas) -->
+    <!-- Cota Total Comprimento (Topo) -->
+    <line x1="0" y1="-25" x2="880" y2="-25" stroke="#94a3b8" stroke-width="1.5" />
+    <line x1="0" y1="-30" x2="0" y2="-20" stroke="#94a3b8" stroke-width="1.5" />
+    <line x1="880" y1="-30" x2="880" y2="-20" stroke="#94a3b8" stroke-width="1.5" />
+    <text x="700" y="-32" class="label-dim" font-weight="bold">COMPRIMENTO TOTAL: 17.60 m</text>
+
+    <!-- Cota Total Largura (Esquerda) -->
+    <line x1="-25" y1="0" x2="-25" y2="500" stroke="#94a3b8" stroke-width="1.5" />
+    <line x1="-30" y1="0" x2="-20" y2="0" stroke="#94a3b8" stroke-width="1.5" />
+    <line x1="-30" y1="500" x2="-20" y2="500" stroke="#94a3b8" stroke-width="1.5" />
+    <text x="-32" y="255" class="label-dim" font-weight="bold" transform="rotate(-90 -32 255)">LARGURA TOTAL: 10.00 m</text>
+
+  </g>
+</svg>
