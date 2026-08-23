@@ -26,6 +26,9 @@
                 <!-- Cabeçalho com o botão alinhado à direita -->
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span class="fw-bold text-secondary">{{ $planta->name }}</span>
+                    <a href="/plantas/{{$planta->id}}/edit" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Marcar planta
+                    </a>
                     <form action="/plantas/{{$planta->predio_id}}/{{$planta->id}}" method="post" class="m-0">
                         @csrf
                         @method('delete')

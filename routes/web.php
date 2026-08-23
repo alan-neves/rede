@@ -64,6 +64,8 @@ Route::delete('/tipo-portas/{tipoPorta}', [TipoPortaController::class, 'destroy'
 
 // Plantas
 Route::post('/plantas/{predio}', [PlantaController::class, 'store']);
+Route::get('/plantas/{planta}/edit', [PlantaController::class, 'edit']);
+Route::put('/plantas/{planta}', [PlantaController::class, 'update']);
 Route::get('/plantas/{predio}/{planta}', [PlantaController::class, 'show']);
 Route::get('/plantas/{predio}', [PlantaController::class, 'index']);
 Route::delete('/plantas/{predio}/{planta}', [PlantaController::class, 'destroy']);

@@ -8,12 +8,17 @@ class PatchPanelSala extends Pivot
 {
     protected $table = 'patch_panel_sala';
 
-    protected $fillable = [
+protected $fillable = [
         'patch_panel_id',
         'sala_id',
         'porta',
         'user_id',
-        'tipo_porta_id'
+        'tipo_porta_id',
+        'x',
+        'y',
+        'comentario',
+        'tamanho',
+        'planta_id',
     ];
 
     public function tipoPorta()
@@ -29,5 +34,10 @@ class PatchPanelSala extends Pivot
     public function sala()
     {
         return $this->belongsTo(Sala::class);
+    }
+
+    public function planta()
+    {
+        return $this->belongsTo(Planta::class);
     }
 }
