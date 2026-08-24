@@ -153,37 +153,6 @@
     <line x1="240" y1="300" x2="240" y2="500" class="wall-thin" />
     <line x1="580" y1="300" x2="580" y2="500" class="wall-thin" />
 
-
-    <!-- IDENTIFICAÇÃO DOS ESPAÇOS E DIMENSÕES -->
-    
-    <!-- Sala 1 -->
-    <text x="140" y="100" class="label-title">SALA 1: RECEPÇÃO</text>
-    <text x="140" y="125" class="label-dim">5.60 m x 4.40 m (24.6 m²)</text>
-
-    <!-- Sala 2 -->
-    <text x="440" y="100" class="label-title">SALA 2: REUNIÕES</text>
-    <text x="440" y="125" class="label-dim">6.40 m x 4.40 m (28.1 m²)</text>
-
-    <!-- Sala 3 -->
-    <text x="740" y="100" class="label-title">SALA 3: DIRETORIA</text>
-    <text x="740" y="125" class="label-dim">5.60 m x 4.40 m (24.6 m²)</text>
-
-    <!-- Corredor -->
-    <text x="440" y="265" class="label-title" style="fill: #475569; letter-spacing: 2px;">CORREDOR CENTRAL DE CIRCULAÇÃO</text>
-
-    <!-- Sala 4 -->
-    <text x="120" y="395" class="label-title">SALA 4: ATENDIMENTO</text>
-    <text x="120" y="420" class="label-dim">4.80 m x 4.00 m (19.2 m²)</text>
-
-    <!-- Sala 5 -->
-    <text x="410" y="395" class="label-title">SALA 5: STAFF / OPERACIONAL</text>
-    <text x="410" y="420" class="label-dim">6.80 m x 4.00 m (27.2 m²)</text>
-
-    <!-- Sala 6 -->
-    <text x="730" y="395" class="label-title">SALA 6: ARQUIVO / T.I.</text>
-    <text x="730" y="420" class="label-dim">6.00 m x 4.00 m (24.0 m²)</text>
-
-
     <!-- LEGENDA DAS DIMENSÕES EXTERNAS (Cotas decorativas) -->
     <!-- Cota Total Comprimento (Topo) -->
     <line x1="0" y1="-25" x2="880" y2="-25" stroke="#94a3b8" stroke-width="1.5" />

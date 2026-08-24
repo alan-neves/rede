@@ -1,35 +1,37 @@
-<a href="/plantas/{{ $planta->predio_id }}" style="display: inline-block; margin-bottom: 10px; text-decoration: none; color: #000; background-color: #f0f0f0; padding: 5px 10px; border-radius: 4px;">
-    &larr; Voltar
-</a>
+<!-- CDN da biblioteca Panzoom -->
+<script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
 
-<!-- Contêiner ocupando 100% da largura da página -->
-<div id="svg-container" style="position: relative; width: 100%; display: block; cursor: crosshair;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <a href="/plantas/{{ $planta->predio_id }}" style="text-decoration: none; color: #000; background-color: #f0f0f0; padding: 6px 12px; border-radius: 4px; font-size: 14px;">
+        &larr; Voltar
+    </a>
 
-    <!-- Imagem da Planta Baixa -->
-    <img id="svg-image" src="{{ '/plantas/' . $planta->predio_id . '/' . $planta->id }}" style="width: 100%; height: auto; display: block;" alt="Planta Baixa">
+    <!-- Controles de Zoom -->
+    <div style="display: flex; gap: 5px; align-items: center; background: #f8fafc; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        <button type="button" id="btnZoomIn" style="padding: 4px 10px; font-weight: bold; cursor: pointer;">+</button>
+        <button type="button" id="btnZoomOut" style="padding: 4px 10px; font-weight: bold; cursor: pointer;">-</button>
+        <button type="button" id="btnZoomReset" style="padding: 4px 10px; cursor: pointer; font-size: 12px;">Redefinir Zoom</button>
+        <span style="font-size: 11px; color: #64748b; margin-left: 5px;">(Use o scroll do mouse ou clique e arraste para mover)</span>
+    </div>
+</div>
 
-    <!-- Renderização dos Marcadores das Salas -->
-    @foreach($salasMarkerd as $sala)
-        <div class="marker-item" 
-             data-id="{{ $sala->id }}" 
-             data-nome="{{ $sala->nome }}"
-             style="position: absolute; left: {{ $sala->x }}%; top: {{ $sala->y }}%; transform: translate(-50%, -100%); cursor: pointer; z-index: 10;">
-            
-            <!-- Ícone/Pin indicando a Sala -->
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="#2563eb" stroke="#1d4ed8" stroke-width="2" style="display: block; margin: 0 auto; pointer-events: none;">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-            </svg>
-            
-            <span style="background: #1e293b; color: #fff; font-size: 11px; padding: 2px 6px; white-space: nowrap; border-radius: 3px; font-weight: bold; pointer-events: none;">
-                {{ $sala->nome }}
-            </span>
-        </div>
-    @endforeach
+<!-- Viewport fixa para enquadrar a planta -->
+<div id="viewport" style="position: relative; width: 100%; height: 80vh; overflow: hidden; border: 1px solid #ccc; background-color: #f8fafc; border-radius: 6px;">
 
-    <!-- Formulário Pop-up Nativo -->
+    <!-- Alvo do Panzoom -->
+    <div id="panzoom-target" style="position: relative; width: 100%; transform-origin: 0 0; cursor: grab;">
+
+        <!-- Imagem da Planta Baixa -->
+        <img id="svg-image" src="{{ '/plantas/' . $planta->predio_id . '/' . $planta->id }}" style="width: 100%; height: auto; display: block; user-select: none;" draggable="false" alt="Planta Baixa">
+
+        <!-- Renderização dos Marcadores das Salas -->
+        @include('salas.partials.markers', ['salas' => $salasMarkerd])
+
+    </div>
+
+    <!-- Formulário Pop-up Nativo (Fora do panzoom-target para não sofrer distorção) -->
     <div id="popoverForm" style="display: none; position: absolute; background: #fff; border: 1px solid #000; padding: 12px; z-index: 1000; min-width: 250px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
 
-        <!-- Título Dinâmico -->
         <strong id="formTitle" style="display: block; font-size: 13px; margin-bottom: 8px;">Selecione a Sala:</strong>
 
         <!-- Formulário 1: Salvar Coordenada da Sala -->
@@ -73,7 +75,8 @@
 </div>
 
 <script>
-    const svgContainer = document.getElementById('svg-container');
+    const viewport = document.getElementById('viewport');
+    const panzoomTarget = document.getElementById('panzoom-target');
     const svgImage = document.getElementById('svg-image');
     const popoverForm = document.getElementById('popoverForm');
     const deleteForm = document.getElementById('deleteForm');
@@ -81,7 +84,8 @@
     const salaSelect = document.getElementById('sala_select');
     const plantaId = "{{ $planta->id }}";
 
-    // Atualiza a action do formulário principal ao escolher a sala
+    let panzoom;
+
     function updateFormAction() {
         const salaId = salaSelect.value;
         if (salaId) {
@@ -91,7 +95,6 @@
         }
     }
 
-    // Garante que o formulário não seja enviado sem selecionar uma sala
     mainForm.addEventListener('submit', function (e) {
         if (!salaSelect.value) {
             e.preventDefault();
@@ -99,55 +102,94 @@
         }
     });
 
-    svgContainer.addEventListener('click', function (e) {
-        const marker = e.target.closest('.marker-item');
-        const rect = svgImage.getBoundingClientRect();
+    function initPanzoom() {
+        panzoom = Panzoom(panzoomTarget, {
+            maxScale: 6,
+            minScale: 0.8,
+            contain: 'outside'
+        });
 
-        let clickX = e.clientX - rect.left;
-        let clickY = e.clientY - rect.top;
+        setTimeout(() => {
+            panzoom.reset();
+        }, 50);
 
-        if (marker) {
-            // === MODO: REMOÇÃO DA MARCAÇÃO DA SALA ===
-            e.stopPropagation();
-            const salaId = marker.dataset.id;
-            const salaNome = marker.dataset.nome;
+        viewport.addEventListener('wheel', panzoom.zoomWithWheel);
 
-            document.getElementById('formTitle').innerText = 'Sala: ' + salaNome;
-            
-            // Aponta diretamente para a rota DELETE /salas/{sala}/unmark
-            deleteForm.action = `/salas/${salaId}/unmark`;
+        document.getElementById('btnZoomIn').addEventListener('click', panzoom.zoomIn);
+        document.getElementById('btnZoomOut').addEventListener('click', panzoom.zoomOut);
+        document.getElementById('btnZoomReset').addEventListener('click', panzoom.reset);
 
-            mainForm.style.display = 'none';
-            deleteForm.style.display = 'block';
+        let startX = 0;
+        let startY = 0;
 
-        } else if (e.target === svgImage) {
-            // === MODO: NOVA MARCAÇÃO DE SALA ===
+        panzoomTarget.addEventListener('pointerdown', function(e) {
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        panzoomTarget.addEventListener('panzoomend', function(e) {
+            const dist = Math.hypot(e.detail.originalEvent.clientX - startX, e.detail.originalEvent.clientY - startY);
+            if (dist > 5) return; // Cancela se foi um movimento de arrasto
+
+            const originalEvent = e.detail.originalEvent;
+            const targetElement = document.elementFromPoint(originalEvent.clientX, originalEvent.clientY);
+
+            if (!targetElement) return;
+
+            const marker = targetElement.closest('.marker-item');
+            const rect = svgImage.getBoundingClientRect();
+            const clickX = originalEvent.clientX - rect.left;
+            const clickY = originalEvent.clientY - rect.top;
+
             const xPercent = (clickX / rect.width) * 100;
             const yPercent = (clickY / rect.height) * 100;
 
-            document.getElementById('formTitle').innerText = 'Selecione a Sala:';
-            document.getElementById('inputX').value = xPercent.toFixed(2);
-            document.getElementById('inputY').value = yPercent.toFixed(2);
+            if (marker && panzoomTarget.contains(marker)) {
+                // === MODO: REMOÇÃO DA MARCAÇÃO DA SALA ===
+                const salaId = marker.dataset.id;
+                const salaNome = marker.dataset.nome;
 
-            salaSelect.value = "";
-            mainForm.action = "";
-            mainForm.style.display = 'block';
-            deleteForm.style.display = 'none';
-        } else {
-            return;
-        }
+                document.getElementById('formTitle').innerText = 'Sala: ' + salaNome;
+                deleteForm.action = `/salas/${salaId}/unmark`;
 
-        // Posicionamento inteligente do Popover na tela
-        const formWidth = 260;
-        let leftPos = clickX;
-        if (clickX + formWidth > rect.width) {
-            leftPos = clickX - formWidth;
-        }
+                mainForm.style.display = 'none';
+                deleteForm.style.display = 'block';
 
-        popoverForm.style.left = leftPos + 'px';
-        popoverForm.style.top = clickY + 'px';
-        popoverForm.style.display = 'block';
-    });
+            } else if (targetElement === svgImage) {
+                // === MODO: NOVA MARCAÇÃO DE SALA ===
+                document.getElementById('formTitle').innerText = 'Selecione a Sala:';
+                document.getElementById('inputX').value = xPercent.toFixed(2);
+                document.getElementById('inputY').value = yPercent.toFixed(2);
+
+                salaSelect.value = "";
+                mainForm.action = "";
+                mainForm.style.display = 'block';
+                deleteForm.style.display = 'none';
+            } else {
+                return;
+            }
+
+            // Posiciona o Popover dentro da viewport
+            const viewportRect = viewport.getBoundingClientRect();
+            let popoverX = originalEvent.clientX - viewportRect.left;
+            let popoverY = originalEvent.clientY - viewportRect.top;
+
+            if (popoverX + 260 > viewportRect.width) {
+                popoverX -= 260;
+            }
+
+            popoverForm.style.left = popoverX + 'px';
+            popoverForm.style.top = popoverY + 'px';
+            popoverForm.style.display = 'block';
+        });
+    }
+
+    // Inicialização segura após o carregamento da imagem
+    if (svgImage.complete) {
+        initPanzoom();
+    } else {
+        svgImage.addEventListener('load', initPanzoom);
+    }
 
     function closeForm() {
         popoverForm.style.display = 'none';

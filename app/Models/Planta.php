@@ -18,4 +18,9 @@ class Planta extends Model
     {
         return $this->hasMany(PatchPanelSala::class, 'planta_id');
     }
+
+    public function salas()
+    {
+        return $this->hasMany(Sala::class);
+    }
 }

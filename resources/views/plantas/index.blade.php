@@ -55,6 +55,9 @@
 
                         <!-- Marcadores da Planta (Triângulos e Nomes) -->
                         @include('plantas.partials.markers', ['markers' => $planta->markers])
+                        <div style="pointer-events: none;">
+                            @include('salas.partials.markers', ['salas' => $planta->salas])
+                        </div>
 
                     </div>
                 </div>

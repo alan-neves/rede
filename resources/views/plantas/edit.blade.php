@@ -1,19 +1,40 @@
-<a href="/plantas/{{ $planta->predio_id }}" style="display: inline-block; margin-bottom: 10px; text-decoration: none; color: #000; background-color: #f0f0f0; padding: 5px 10px; border-radius: 4px;">
-    &larr; Voltar
-</a>
-<!-- Contêiner ocupando 100% da largura da página -->
-<div id="svg-container" style="position: relative; width: 100%; display: block; cursor: crosshair;">
+<!-- Inclusão do Panzoom via CDN -->
+<script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
 
-    <!-- Imagem SVG ajustada para 100% de largura -->
-    <img id="svg-image" src="{{ '/plantas/' . $planta->predio_id . '/' . $planta->id }}" style="width: 100%; height: auto; display: block;" alt="Planta Baixa">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <a href="/plantas/{{ $planta->predio_id }}" style="text-decoration: none; color: #000; background-color: #f0f0f0; padding: 6px 12px; border-radius: 4px; font-size: 14px;">
+        &larr; Voltar
+    </a>
 
-    <!-- Renderização dos Marcadores Salvos -->
-    @include('plantas.partials.markers')
+    <!-- Barra de Controles de Zoom -->
+    <div style="display: flex; gap: 5px; align-items: center; background: #f8fafc; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        <button type="button" id="btnZoomIn" style="padding: 4px 10px; font-weight: bold; cursor: pointer;">+</button>
+        <button type="button" id="btnZoomOut" style="padding: 4px 10px; font-weight: bold; cursor: pointer;">-</button>
+        <button type="button" id="btnZoomReset" style="padding: 4px 10px; cursor: pointer; font-size: 12px;">Redefinir Zoom</button>
+        <span style="font-size: 11px; color: #64748b; margin-left: 5px;">(Use o scroll do mouse ou clique e arraste para mover)</span>
+    </div>
+</div>
 
-    <!-- Formulário Pop-up Nativo (Aparece no local do clique) -->
+<!-- Viewport fixa para conter o zoom -->
+<div id="viewport" style="position: relative; width: 100%; height: 80vh; overflow: hidden; border: 1px solid #ccc; background-color: #f8fafc; border-radius: 6px;">
+
+    <!-- Target do Panzoom -->
+    <div id="panzoom-target" style="position: relative; width: 100%; transform-origin: 0 0; cursor: grab;">
+
+        <!-- Imagem SVG da Planta Baixa -->
+        <img id="svg-image" src="{{ '/plantas/' . $planta->predio_id . '/' . $planta->id }}" style="width: 100%; height: auto; display: block; user-select: none;" draggable="false" alt="Planta Baixa">
+
+        <!-- Renderização dos Marcadores Salvos -->
+        @include('plantas.partials.markers')
+        <div style="pointer-events: none;">
+            @include('salas.partials.markers', ['salas' => $salasMarkerd])
+        </div>
+
+    </div>
+
+    <!-- Formulário Pop-up Nativo -->
     <div id="popoverForm" style="display: none; position: absolute; background: #fff; border: 1px solid #000; padding: 12px; z-index: 1000; min-width: 250px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
 
-        <!-- Título Dinâmico -->
         <strong id="formTitle" style="display: block; font-size: 13px; margin-bottom: 8px;">Selecione o Ponto:</strong>
 
         <!-- Formulário 1: Salvar/Atualizar Coordenada -->
@@ -56,59 +77,112 @@
 </div>
 
 <script>
-    const svgContainer = document.getElementById('svg-container');
+    const viewport = document.getElementById('viewport');
+    const panzoomTarget = document.getElementById('panzoom-target');
     const svgImage = document.getElementById('svg-image');
     const popoverForm = document.getElementById('popoverForm');
     const deleteForm = document.getElementById('deleteForm');
     const mainForm = document.getElementById('mainForm');
 
-    svgContainer.addEventListener('click', function (e) {
-        const marker = e.target.closest('.marker-item');
-        const rect = svgImage.getBoundingClientRect();
+    let panzoom;
 
-        let clickX = e.clientX - rect.left;
-        let clickY = e.clientY - rect.top;
+    // Função que inicializa o Panzoom e configura os eventos
+    function initPanzoom() {
+        // Inicialização do Panzoom
+        panzoom = Panzoom(panzoomTarget, {
+            maxScale: 6,
+            minScale: 0.8,
+            contain: 'outside'
+        });
 
-        if (marker) {
-            // === MODO: REMOÇÃO ===
-            e.stopPropagation();
-            const markerId = marker.dataset.id;
-            const markerNome = marker.dataset.nome;
+        // Força um redimensionamento inicial correto após o carregamento
+        setTimeout(() => {
+            panzoom.reset();
+        }, 50);
 
-            document.getElementById('formTitle').innerText = 'Ponto: ' + markerNome;
-            
-            // Define a rota exata com o ID do PatchPanelSala
-            deleteForm.action = `/plantas/${markerId}/unmark`;
+        // Zoom via Scroll na viewport
+        viewport.addEventListener('wheel', panzoom.zoomWithWheel);
 
-            mainForm.style.display = 'none';
-            deleteForm.style.display = 'block';
+        // Botões de Zoom
+        document.getElementById('btnZoomIn').addEventListener('click', panzoom.zoomIn);
+        document.getElementById('btnZoomOut').addEventListener('click', panzoom.zoomOut);
+        document.getElementById('btnZoomReset').addEventListener('click', panzoom.reset);
 
-        } else if (e.target === svgImage) {
-            // === MODO: NOVA MARCAÇÃO ===
+        // Controle para diferenciar clique de arrasto (pan)
+        let startX = 0;
+        let startY = 0;
+
+        panzoomTarget.addEventListener('pointerdown', function(e) {
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        // Escuta o término do arrasto/clique do Panzoom
+        panzoomTarget.addEventListener('panzoomend', function(e) {
+            const dist = Math.hypot(e.detail.originalEvent.clientX - startX, e.detail.originalEvent.clientY - startY);
+            // Se arrastou mais de 5px, cancela a abertura do popover
+            if (dist > 5) return;
+
+            const originalEvent = e.detail.originalEvent;
+            const targetElement = document.elementFromPoint(originalEvent.clientX, originalEvent.clientY);
+
+            if (!targetElement) return;
+
+            // Procura se clicou em um marcador de PONTO
+            const marker = targetElement.closest('.marker-ponto, .marker-item');
+
+            const rect = svgImage.getBoundingClientRect();
+            const clickX = originalEvent.clientX - rect.left;
+            const clickY = originalEvent.clientY - rect.top;
+
+            // Porcentagem calculada com base na escala atual
             const xPercent = (clickX / rect.width) * 100;
             const yPercent = (clickY / rect.height) * 100;
 
-            document.getElementById('formTitle').innerText = 'Selecione o Ponto:';
-            document.getElementById('inputX').value = xPercent.toFixed(2);
-            document.getElementById('inputY').value = yPercent.toFixed(2);
+            if (marker && panzoomTarget.contains(marker)) {
+                // === MODO: REMOÇÃO DE PONTO ===
+                const markerId = marker.dataset.id;
+                const markerNome = marker.dataset.nome;
 
-            mainForm.style.display = 'block';
-            deleteForm.style.display = 'none';
-        } else {
-            return;
-        }
+                document.getElementById('formTitle').innerText = 'Ponto: ' + markerNome;
+                deleteForm.action = `/plantas/${markerId}/unmark`;
 
-        // Posicionamento do Popover
-        const formWidth = 260;
-        let leftPos = clickX;
-        if (clickX + formWidth > rect.width) {
-            leftPos = clickX - formWidth;
-        }
+                mainForm.style.display = 'none';
+                deleteForm.style.display = 'block';
 
-        popoverForm.style.left = leftPos + 'px';
-        popoverForm.style.top = clickY + 'px';
-        popoverForm.style.display = 'block';
-    });
+            } else if (targetElement === svgImage) {
+                // === MODO: NOVA MARCAÇÃO DE PONTO ===
+                document.getElementById('formTitle').innerText = 'Selecione o Ponto:';
+                document.getElementById('inputX').value = xPercent.toFixed(2);
+                document.getElementById('inputY').value = yPercent.toFixed(2);
+
+                mainForm.style.display = 'block';
+                deleteForm.style.display = 'none';
+            } else {
+                return;
+            }
+
+            // Posiciona o Popover na tela baseado na viewport fixa
+            const viewportRect = viewport.getBoundingClientRect();
+            let popoverX = originalEvent.clientX - viewportRect.left;
+            let popoverY = originalEvent.clientY - viewportRect.top;
+
+            if (popoverX + 260 > viewportRect.width) {
+                popoverX -= 260;
+            }
+
+            popoverForm.style.left = popoverX + 'px';
+            popoverForm.style.top = popoverY + 'px';
+            popoverForm.style.display = 'block';
+        });
+    }
+
+    // Garante a execução somente após o SVG carregar completamente na página
+    if (svgImage.complete) {
+        initPanzoom();
+    } else {
+        svgImage.addEventListener('load', initPanzoom);
+    }
 
     function closeForm() {
         popoverForm.style.display = 'none';

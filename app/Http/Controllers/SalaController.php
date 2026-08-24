@@ -261,6 +261,7 @@ class SalaController extends Controller
         $sala->update([
             'x' => null,
             'y' => null,
+            'planta_id' => null,
         ]);
 
         return back()->with('success', 'Sala removido com sucesso!');

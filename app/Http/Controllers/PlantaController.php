@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Planta;
+use App\Models\Sala;
 use App\Http\Requests\PlantaRequest;
 use Illuminate\Support\Facades\Gate;
 use App\Models\Predio;
@@ -15,16 +16,21 @@ class PlantaController extends Controller
     public function index(Predio $predio)
     {
         Gate::authorize('admin');
-        
-        $predio->load(['plantas.markers' => function ($query) {
-            $query->whereNotNull('x')->whereNotNull('y')->with(['patchPanel.rack', 'sala']);
-        }]);
-        
-        return view('plantas.index',[
-            'predio' => $predio,
-         ]);
-    }
 
+        $predio->load([
+            'plantas.markers' => function ($query) {
+                $query->whereNotNull('x')->whereNotNull('y')->with(['patchPanel.rack', 'sala']);
+            },
+            // Carrega apenas as salas que possuem marcação (x e y preenchidos)
+            'plantas.salas' => function ($query) {
+                $query->whereNotNull('x')->whereNotNull('y');
+            }
+        ]);
+        
+        return view('plantas.index', [
+            'predio' => $predio,
+        ]);
+    }
 
     public function store(PlantaRequest $request, Predio $predio)
     {
@@ -54,6 +60,11 @@ class PlantaController extends Controller
 
         $predio_id = $planta->predio_id;
 
+        $salasMarkerd = Sala::where('planta_id', $planta->id)
+            ->whereNotNull('x')
+            ->whereNotNull('y')
+            ->get();
+
         // pontos já marcados na planta (com coordenadas x e y)
         $markers = PatchPanelSala::with(['patchPanel.rack', 'sala'])
             ->where('planta_id', $planta->id)
@@ -73,6 +84,7 @@ class PlantaController extends Controller
         return view('plantas.edit', [
             'planta' => $planta,
             'markers' => $markers,
+            'salasMarkerd' => $salasMarkerd,
             'pontosSemMarcacao' => $pontosSemMarcacao,
         ]);
     }
@@ -101,20 +113,23 @@ class PlantaController extends Controller
     {
         Gate::authorize('admin');
 
-        // 1. Zera as coordenadas x e y de todas as marcações vinculadas a esta planta
-        PatchPanelSala::where('planta_id', $planta->id)->update([
-            'x' => null,
-            'y' => null,
-        ]);
+        if (PatchPanelSala::where('planta_id', $planta->id)->get()->isNotEmpty()) {
+            session()->flash('alert-danger', 'Planta não pode ser removida, pois tem pontos marcados!');
+            return back();
+        }
 
-        // 2. Remove o arquivo da imagem do storage
+        if (Sala::where('planta_id', $planta->id)->get()->isNotEmpty()) {
+            session()->flash('alert-danger', 'Planta não pode ser removida, pois tem salas marcadas!');
+            return back();
+        }
+
+        // Remove o arquivo da imagem do storage
         if ($planta->path && Storage::exists($planta->path)) {
             Storage::delete($planta->path);
         }
 
-        // 3. Deleta o registro da planta
+        // Deleta o registro da planta
         $planta->delete();
-
         return back()->with('success', 'Planta e marcações removidas com sucesso!');
     }
 
@@ -126,6 +141,7 @@ class PlantaController extends Controller
         PatchPanelSala::where('id', $patch_panel_sala_id)->update([
             'x' => null,
             'y' => null,
+            'planta_id' => null,
         ]);
 
         return back()->with('success', 'Ponto removido com sucesso!');
