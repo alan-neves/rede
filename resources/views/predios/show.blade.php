@@ -119,7 +119,6 @@
             </div>
         </div>
     </div>
-    @include('plantas.form')
     <a href="/plantas/{{ $predio->id }}" class="btn btn-primary mb-3">Ver Plantas</a>
 </div>
 @endsection
