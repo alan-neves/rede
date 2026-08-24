@@ -10,6 +10,9 @@ class Sala extends Model
         'nome',
         'predio_id',
         'user_id',
+        'planta_id', 
+        'x',
+        'y',
     ];
 
     public function predio()
@@ -30,5 +33,10 @@ class Sala extends Model
         return $this->belongsToMany(TipoPorta::class, 'patch_panel_sala', 'sala_id', 'tipo_porta_id')
                 ->withPivot('porta', 'patch_panel_id')
                 ->withTimestamps();
+    }
+
+    public function planta()
+    {
+        return $this->belongsTo(Planta::class);
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Sala;
 use App\Models\Predio;
 use App\Models\PatchPanel;
 use App\Models\Rack;
+use App\Models\Planta;
 use App\Http\Requests\SalaRequest;
 use App\Http\Requests\VincularPortaSalaRequest;
 use Illuminate\Support\Facades\Gate;
@@ -209,5 +210,59 @@ class SalaController extends Controller
             session()->flash('alert-danger', 'Sala não pode ser removida, pois possui portas vinculadas');
         }
         return back();
+    }
+
+    public function markers(Planta $planta)
+    {
+        Gate::authorize('admin');
+
+        // 1. Salas marcadas NESTA planta
+        $salasMarkerd = Sala::where('planta_id', $planta->id)
+            ->whereNotNull('x')
+            ->whereNotNull('y')
+            ->get();
+
+        // 2. Salas do MESMO PRÉDIO pendentes de marcação
+        $salasNotMarkerd = Sala::where('predio_id', $planta->predio_id)
+            ->whereNull('x')
+            ->whereNull('y')
+            ->get();
+
+        return view('salas.markers', [
+            'planta'          => $planta,
+            'salasMarkerd'    => $salasMarkerd,
+            'salasNotMarkerd' => $salasNotMarkerd,
+        ]);
+    }
+
+    public function mark(Sala $sala, Planta $planta, Request $request)
+    {
+        $validated = $request->validate([
+            'planta_id'           => 'required|exists:plantas,id',
+            'x'                   => 'required|numeric',
+            'y'                   => 'required|numeric',
+        ]);
+
+        // Atualiza a linha existente atribuindo as coordenadas e a planta_id
+        $sala->update([
+            'x'         => $validated['x'],
+            'y'         => $validated['y'],
+            'planta_id' => $validated['planta_id'],
+        ]);
+
+        return redirect()->back()->with('success', 'Sala vinculado à planta com sucesso!');
+    }
+
+    public function unmark(Sala $sala)
+    {
+        Gate::authorize('admin');
+
+        // Zera as coordenadas x e y de todas as marcações vinculadas a esta planta
+        $sala->update([
+            'x' => null,
+            'y' => null,
+        ]);
+
+        return back()->with('success', 'Sala removido com sucesso!');
     }
 }

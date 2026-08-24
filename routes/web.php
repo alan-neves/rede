@@ -24,10 +24,18 @@ Route::delete('/predios/{predio}', [PredioController::class, 'destroy']);
 // Salas
 Route::get('/salas/create', [SalaController::class, 'create']);
 Route::post('/salas', [SalaController::class, 'store']);
+
+Route::get('/salas/{planta}/markers', [SalaController::class, 'markers']);
+Route::delete('/salas/{sala}/unmark', [SalaController::class, 'unmark']);
+Route::put('/salas/{sala}/{planta}/mark', [SalaController::class, 'mark']);
+
+
 Route::get('/salas/{sala}', [SalaController::class, 'show']);
 Route::get('/salas/{sala}/edit', [SalaController::class, 'edit']);
 Route::put('/salas/{sala}', [SalaController::class, 'update']);
 Route::delete('/salas/{sala}', [SalaController::class, 'destroy']);
+Route::get('/salas/{planta}/mark', [PlantaController::class, 'mark']);
+
 
 // Racks
 Route::get('/racks/create', [RackController::class, 'create']);
@@ -65,12 +73,11 @@ Route::delete('/tipo-portas/{tipoPorta}', [TipoPortaController::class, 'destroy'
 // Plantas
 Route::post('/plantas/{predio}', [PlantaController::class, 'store']);
 Route::get('/plantas/{planta}/edit', [PlantaController::class, 'edit']);
-Route::delete('/plantas/{patch_panel_sala_id}/unmarker', [PlantaController::class, 'unmarker']);
+Route::delete('/plantas/{patch_panel_sala_id}/unmark', [PlantaController::class, 'unmark']);
 Route::put('/plantas/{planta}', [PlantaController::class, 'update']);
 Route::get('/plantas/{predio}/{planta}', [PlantaController::class, 'show']);
 Route::get('/plantas/{predio}', [PlantaController::class, 'index']);
 Route::delete('/plantas/{predio}/{planta}', [PlantaController::class, 'destroy']);
-
 
 // Vincular portas de patch panels a salas
 Route::get('/patch-panels/{patchPanel}/selecionar-sala', [PatchPanelController::class, 'selecionarSala']);

@@ -10,6 +10,10 @@ class Planta extends Model
         return $this->belongsTo(Predio::class);
     }
 
+    public function sala(){
+        return $this->belongsTo(Sala::class);
+    }
+
     public function markers()
     {
         return $this->hasMany(PatchPanelSala::class, 'planta_id');

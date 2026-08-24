@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('patch_panel_sala', function (Blueprint $table) {
+        Schema::table('salas', function (Blueprint $table) {
             $table->decimal('x', 8, 2)->nullable();
             $table->decimal('y', 8, 2)->nullable();
-            $table->string('comentario')->nullable();
-            $table->decimal('tamanho', 8, 2)->nullable();
             $table->unsignedBigInteger('planta_id')->nullable();
             $table->foreign('planta_id')->references('id')->on('plantas')->onDelete('set null');
         });
@@ -26,7 +24,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('patch_panel_sala', function (Blueprint $table) {
+        Schema::table('salas', function (Blueprint $table) {
             //
         });
     }

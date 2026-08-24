@@ -78,7 +78,7 @@
             document.getElementById('formTitle').innerText = 'Ponto: ' + markerNome;
             
             // Define a rota exata com o ID do PatchPanelSala
-            deleteForm.action = `/plantas/${markerId}/unmarker`;
+            deleteForm.action = `/plantas/${markerId}/unmark`;
 
             mainForm.style.display = 'none';
             deleteForm.style.display = 'block';

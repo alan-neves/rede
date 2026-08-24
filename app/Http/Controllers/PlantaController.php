@@ -118,7 +118,7 @@ class PlantaController extends Controller
         return back()->with('success', 'Planta e marcações removidas com sucesso!');
     }
 
-    public function unmarker($patch_panel_sala_id)
+    public function unmark($patch_panel_sala_id)
     {
         Gate::authorize('admin');
 
