@@ -30,7 +30,7 @@
             </div>
 
             <div class="form-group" style="max-width: 200px;">
-                <label for="tamanho">Tamanho (Opcional):</label>
+                <label for="tamanho">Comprimento Cabeamento Horizontal (Opcional):</label>
                 <div class="input-group">
                     <input type="number" step="0.01" class="form-control" name="tamanho" id="tamanho" placeholder="0.00">
                     <div class="input-group-append">
