@@ -112,6 +112,8 @@ class PatchPanelController extends Controller
         $dadosVinculo = [
             'porta' => $porta, 
             'user_id' => auth()->id(),
+            'comentario' => $request->comentario,
+            'tamanho' => $request->tamanho,
             'tipo_porta_id' => $request->tipo_porta_id // Pode ser null
         ];
 
@@ -151,6 +153,7 @@ class PatchPanelController extends Controller
             'patchPanel' => $patchPanel,
             'sala' => $sala,
             'porta' => $porta,
+            'vinculo' => $vinculo,
             'tipoPortaAtual' => $vinculo->pivot->tipo_porta_id,
             'tipoPortas' => \App\Models\TipoPorta::all()
         ]);
@@ -172,6 +175,8 @@ class PatchPanelController extends Controller
             ->where('sala_id', $sala->id)
             ->updateExistingPivot($sala->id, [
                 'tipo_porta_id' => $request->tipo_porta_id,
+                'comentario' => $request->comentario,
+                'tamanho' => $request->tamanho,
                 'updated_at' => now()
             ]);
 

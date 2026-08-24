@@ -19,35 +19,46 @@
         <p><strong>Descrição:</strong> {{ $predio->descricao }}</p>
         @endif
 
-        @include('plantas.form')
-
         @foreach($predio->plantas as $planta)
             <div class="card mb-4 shadow-sm">
-                <!-- Cabeçalho com o botão alinhado à direita -->
+                <!-- Cabeçalho com as ações -->
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span class="fw-bold text-secondary">{{ $planta->name }}</span>
-                    <a href="/plantas/{{$planta->id}}/edit" class="btn btn-primary btn-sm">
-                        <i class="fas fa-edit"></i> Marcar planta
-                    </a>
-                    <form action="/plantas/{{$planta->predio_id}}/{{$planta->id}}" method="post" class="m-0">
-                        @csrf
-                        @method('delete')
-                        <button type="submit" 
-                                onclick="return confirm('Tem certeza?');" 
-                                class="btn btn-danger btn-sm">
-                            Deletar Planta
-                        </button> 
-                    </form>
+                    <div>
+                        <a href="/plantas/{{$planta->id}}/edit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit"></i> Marcar planta
+                        </a>
+                        <form action="/plantas/{{$planta->predio_id}}/{{$planta->id}}" method="post" class="d-inline">
+                            @csrf
+                            @method('delete')
+                            <button type="submit" 
+                                    onclick="return confirm('Tem certeza?');" 
+                                    class="btn btn-danger btn-sm">
+                                Deletar Planta
+                            </button> 
+                        </form>
+                    </div>
                 </div>
 
-                <!-- Corpo do card com a imagem -->
-                <div class="card-body text-center p-2">
-                    <img src="/plantas/{{$planta->predio_id}}/{{$planta->id}}" 
-                        class="img-fluid rounded" 
-                        style="width: 100%; object-fit: contain;">
+                <!-- Corpo do card com a Imagem e os Marcadores (Triângulos) -->
+                <div class="card-body p-0">
+                    <div style="position: relative; width: 100%; display: block;">
+                        
+                        <!-- Imagem da Planta -->
+                        <img src="/plantas/{{$planta->predio_id}}/{{$planta->id}}" 
+                             class="img-fluid rounded" 
+                             style="width: 100%; height: auto; display: block;" 
+                             alt="Planta Baixa">
+
+                        <!-- Marcadores da Planta (Triângulos e Nomes) -->
+                        @include('plantas.partials.markers', ['markers' => $planta->markers])
+
+                    </div>
                 </div>
             </div>
         @endforeach
+        @include('plantas.form')
     </div>
+</div>
 
 @endsection

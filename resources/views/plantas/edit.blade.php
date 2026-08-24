@@ -1,3 +1,6 @@
+<a href="/plantas/{{ $planta->predio_id }}" style="display: inline-block; margin-bottom: 10px; text-decoration: none; color: #000; background-color: #f0f0f0; padding: 5px 10px; border-radius: 4px;">
+    &larr; Voltar
+</a>
 <!-- Contêiner ocupando 100% da largura da página -->
 <div id="svg-container" style="position: relative; width: 100%; display: block; cursor: crosshair;">
 
@@ -5,84 +8,98 @@
     <img id="svg-image" src="{{ '/plantas/' . $planta->predio_id . '/' . $planta->id }}" style="width: 100%; height: auto; display: block;" alt="Planta Baixa">
 
     <!-- Renderização dos Marcadores Salvos -->
-    @foreach($markers as $marker)
-        <div style="position: absolute; left: {{ $marker->x }}%; top: {{ $marker->y }}%; transform: translate(-50%, -100%); pointer-events: none;">
-            <svg width="20" height="20" viewBox="0 0 100 100" style="display: block; margin: 0 auto;">
-                <polygon points="50,15 90,85 10,85" fill="#ef4444" stroke="#991b1b" stroke-width="5" />
-            </svg>
-            <span style="background: #000; color: #fff; font-size: 11px; padding: 2px 4px; white-space: nowrap;">
-                {{ optional(optional($marker->patchPanel)->rack)->nome }}{{ $marker->porta }}
-            </span>
-        </div>
-    @endforeach
+    @include('plantas.partials.markers')
 
     <!-- Formulário Pop-up Nativo (Aparece no local do clique) -->
-    <div id="popoverForm" style="display: none; position: absolute; background: #fff; border: 1px solid #000; padding: 10px; z-index: 1000;">
+    <div id="popoverForm" style="display: none; position: absolute; background: #fff; border: 1px solid #000; padding: 12px; z-index: 1000; min-width: 250px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
 
-    <form action="/plantas/{{ $planta->id }}" method="POST">
-        @csrf
-        @method('PUT')
+        <!-- Título Dinâmico -->
+        <strong id="formTitle" style="display: block; font-size: 13px; margin-bottom: 8px;">Selecione o Ponto:</strong>
 
-        <!-- Inputs Ocultos com IDs ÚNICOS para o JavaScript -->
-        <input type="hidden" name="x" id="inputX">
-        <input type="hidden" name="y" id="inputY">
-        <input type="hidden" name="planta_id" value="{{ $planta->id }}">
+        <!-- Formulário 1: Salvar/Atualizar Coordenada -->
+        <form action="/plantas/{{ $planta->id }}" method="POST" id="mainForm">
+            @csrf
+            @method('PUT')
 
-        <label for="patch_panel_sala_id" style="display: block; font-weight: bold; font-size: 13px; margin-bottom: 6px;">
-            Selecione o Ponto:
-        </label>
+            <input type="hidden" name="x" id="inputX">
+            <input type="hidden" name="y" id="inputY">
+            <input type="hidden" name="planta_id" value="{{ $planta->id }}">
 
-        <select name="patch_panel_sala_id" id="patch_panel_sala_id" required style="width: 100%; padding: 5px; margin-bottom: 10px;">
-            <option value="">-- Selecione --</option>
-            @foreach($pontosSemMarcacao as $ponto)
-                <option value="{{ $ponto->id }}">
-                    {{ optional(optional($ponto->patchPanel)->rack)->nome }}{{ $ponto->porta }} 
-                    @if($ponto->sala)
-                        ({{ $ponto->sala->nome }})
-                    @endif
-                </option>
-            @endforeach
-        </select>
+            <select name="patch_panel_sala_id" id="patch_panel_sala_id" required style="width: 100%; padding: 5px; margin-bottom: 10px;">
+                <option value="">-- Selecione --</option>
+                @foreach($pontosSemMarcacao as $ponto)
+                    <option value="{{ $ponto->id }}">
+                        {{ optional(optional($ponto->patchPanel)->rack)->nome }}{{ $ponto->porta }} 
+                        @if($ponto->sala) ({{ $ponto->sala->nome }}) @endif
+                    </option>
+                @endforeach
+            </select>
 
-        @if($pontosSemMarcacao->isEmpty())
-            <p style="color: red; font-size: 11px; margin-top: 0;">Nenhum ponto pendente de marcação neste prédio.</p>
-        @endif
+            <div style="display: flex; justify-content: space-between; gap: 5px;">
+                <button type="submit" id="btnSalvar" style="cursor: pointer;">Salvar Ponto</button>
+                <button type="button" onclick="closeForm()" style="cursor: pointer;">Cancelar</button>
+            </div>
+        </form>
 
-        <div style="display: flex; justify-content: space-between;">
-            <button type="submit" @if($pontosSemMarcacao->isEmpty()) disabled @endif style="cursor: pointer;">Salvar Ponto</button>
-            <button type="button" onclick="closeForm()" style="cursor: pointer;">Cancelar</button>
-        </div>
-    </form>
+        <!-- Formulário 2: Remover Marcação Existente -->
+        <form id="deleteForm" action="" method="POST" style="display: none; margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px;">
+            @csrf
+            @method('DELETE')
+            
+            <button type="submit" onclick="return confirm('Desvincular esta marcação da planta?');" style="width: 100%; background: #dc3545; color: #fff; border: none; padding: 6px; cursor: pointer; border-radius: 3px; font-weight: bold;">
+                Remover Marcação
+            </button>
+        </form>
+
     </div>
 
 </div>
 
 <script>
+    const svgContainer = document.getElementById('svg-container');
     const svgImage = document.getElementById('svg-image');
     const popoverForm = document.getElementById('popoverForm');
+    const deleteForm = document.getElementById('deleteForm');
+    const mainForm = document.getElementById('mainForm');
 
-    svgImage.addEventListener('click', function (e) {
+    svgContainer.addEventListener('click', function (e) {
+        const marker = e.target.closest('.marker-item');
         const rect = svgImage.getBoundingClientRect();
 
-        // Posição percentual
-        const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
-        const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+        let clickX = e.clientX - rect.left;
+        let clickY = e.clientY - rect.top;
 
-        // Posição em pixels para abrir o popover
-        const clickX = e.clientX - rect.left;
-        const clickY = e.clientY - rect.top;
+        if (marker) {
+            // === MODO: REMOÇÃO ===
+            e.stopPropagation();
+            const markerId = marker.dataset.id;
+            const markerNome = marker.dataset.nome;
 
-        // GARANTIA: Seleciona explicitamente os inputs pelo id exato
-        const inputX = document.getElementById('inputX');
-        const inputY = document.getElementById('inputY');
+            document.getElementById('formTitle').innerText = 'Ponto: ' + markerNome;
+            
+            // Define a rota exata com o ID do PatchPanelSala
+            deleteForm.action = `/plantas/${markerId}/unmarker`;
 
-        if (inputX && inputY) {
-            inputX.value = xPercent.toFixed(2);
-            inputY.value = yPercent.toFixed(2);
+            mainForm.style.display = 'none';
+            deleteForm.style.display = 'block';
+
+        } else if (e.target === svgImage) {
+            // === MODO: NOVA MARCAÇÃO ===
+            const xPercent = (clickX / rect.width) * 100;
+            const yPercent = (clickY / rect.height) * 100;
+
+            document.getElementById('formTitle').innerText = 'Selecione o Ponto:';
+            document.getElementById('inputX').value = xPercent.toFixed(2);
+            document.getElementById('inputY').value = yPercent.toFixed(2);
+
+            mainForm.style.display = 'block';
+            deleteForm.style.display = 'none';
+        } else {
+            return;
         }
 
-        // Ajuste para não cortar a caixinha na borda direita
-        const formWidth = 280;
+        // Posicionamento do Popover
+        const formWidth = 260;
         let leftPos = clickX;
         if (clickX + formWidth > rect.width) {
             leftPos = clickX - formWidth;
@@ -91,18 +108,11 @@
         popoverForm.style.left = leftPos + 'px';
         popoverForm.style.top = clickY + 'px';
         popoverForm.style.display = 'block';
-
-        const selectPonto = document.getElementById('patch_panel_sala_id');
-        if (selectPonto) {
-            setTimeout(() => selectPonto.focus(), 50);
-        }
     });
 
     function closeForm() {
         popoverForm.style.display = 'none';
         const selectPonto = document.getElementById('patch_panel_sala_id');
-        if (selectPonto) {
-            selectPonto.value = '';
-        }
+        if (selectPonto) selectPonto.value = '';
     }
 </script>

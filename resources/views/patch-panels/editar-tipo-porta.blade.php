@@ -26,6 +26,21 @@
                 </select>
             </div>
             
+            <div class="form-group">
+                <label for="comentario">Comentário (Opcional):</label>
+                <input class="form-control" name="comentario" id="comentario" value="{{ old('comentario', $vinculo->pivot->comentario) }}">
+            </div>
+
+            <div class="form-group" style="max-width: 200px;">
+                <label for="tamanho">Tamanho (Opcional):</label>
+                <div class="input-group">
+                    <input type="number" step="0.01" class="form-control" name="tamanho" id="tamanho" placeholder="0.00" value="{{ old('tamanho', $vinculo->pivot->tamanho) }}">
+                    <div class="input-group-append">
+                        <span class="input-group-text">m</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="mt-3">
                 <button type="submit" class="btn btn-primary">Atualizar Tipo de Porta</button>
                 <a href="/patch-panels/{{ $patchPanel->id }}" class="btn btn-secondary">Cancelar</a>

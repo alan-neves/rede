@@ -15,6 +15,11 @@ class PlantaController extends Controller
     public function index(Predio $predio)
     {
         Gate::authorize('admin');
+        
+        $predio->load(['plantas.markers' => function ($query) {
+            $query->whereNotNull('x')->whereNotNull('y')->with(['patchPanel.rack', 'sala']);
+        }]);
+        
         return view('plantas.index',[
             'predio' => $predio,
          ]);
@@ -95,10 +100,34 @@ class PlantaController extends Controller
     public function destroy(Predio $predio, Planta $planta)
     {
         Gate::authorize('admin');
+
+        // 1. Zera as coordenadas x e y de todas as marcações vinculadas a esta planta
+        PatchPanelSala::where('planta_id', $planta->id)->update([
+            'x' => null,
+            'y' => null,
+        ]);
+
+        // 2. Remove o arquivo da imagem do storage
         if ($planta->path && Storage::exists($planta->path)) {
             Storage::delete($planta->path);
         }
+
+        // 3. Deleta o registro da planta
         $planta->delete();
-        return back();
+
+        return back()->with('success', 'Planta e marcações removidas com sucesso!');
+    }
+
+    public function unmarker($patch_panel_sala_id)
+    {
+        Gate::authorize('admin');
+
+        // Zera as coordenadas x e y de todas as marcações vinculadas a esta planta
+        PatchPanelSala::where('id', $patch_panel_sala_id)->update([
+            'x' => null,
+            'y' => null,
+        ]);
+
+        return back()->with('success', 'Ponto removido com sucesso!');
     }
 }

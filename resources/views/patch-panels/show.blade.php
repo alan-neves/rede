@@ -33,6 +33,9 @@
                                 <th>Status</th>
                                 <th>Local Vinculado</th>
                                 <th>Tipo de Porta</th>
+                                <th>Comentário</th>
+                                <th>Tamanho</th>
+                                <th>Planta</th>
                                 <th width="180px">Ações</th>
                             </tr>
                         </thead>
@@ -69,6 +72,28 @@
                                         -
                                     @endif
                                 </td>
+                                <td>
+                                    @if($vinculo && $vinculo->pivot->comentario)
+                                        {{ $vinculo->pivot->comentario }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($vinculo && $vinculo->pivot->tamanho)
+                                        {{ $vinculo->pivot->tamanho }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($vinculo && $vinculo->pivot->planta_id)
+                                        <a href="/plantas/{{ $vinculo->pivot->planta_id }}/edit" class="btn btn-sm btn-info">
+                                            Ver Planta
+                                        </a>
+                                    @else
+                                        -
+                                    @endif
                                 <td>
                                     @can('user')
                                     @if($vinculo)

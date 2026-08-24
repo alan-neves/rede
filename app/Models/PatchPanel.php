@@ -22,7 +22,7 @@ class PatchPanel extends Model
     {
         return $this->belongsToMany(Sala::class)
                 ->using(PatchPanelSala::class)
-                ->withPivot('porta','user_id','tipo_porta_id')
+                ->withPivot('porta','user_id','tipo_porta_id','comentario','tamanho','planta_id')
                 ->withTimestamps();
     }
 

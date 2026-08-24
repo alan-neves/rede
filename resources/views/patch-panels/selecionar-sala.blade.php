@@ -1,7 +1,6 @@
 @extends('main')
 
 @section('content')
-
 <div class="card">
     <div class="card-header bg-usp">
         <h1 class="h4 mb-0 text-dark">

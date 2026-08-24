@@ -23,6 +23,21 @@
                     @endforeach
                 </select>
             </div>
+
+            <div class="form-group">
+                <label for="comentario">Comentário (Opcional):</label>
+                <input class="form-control" name="comentario" id="comentario">
+            </div>
+
+            <div class="form-group" style="max-width: 200px;">
+                <label for="tamanho">Tamanho (Opcional):</label>
+                <div class="input-group">
+                    <input type="number" step="0.01" class="form-control" name="tamanho" id="tamanho" placeholder="0.00">
+                    <div class="input-group-append">
+                        <span class="input-group-text">m</span>
+                    </div>
+                </div>
+            </div>
             
             <div class="mt-3">
                 <button type="submit" class="btn btn-primary">Vincular Porta</button>

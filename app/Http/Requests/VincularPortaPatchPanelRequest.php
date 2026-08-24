@@ -16,7 +16,9 @@ class VincularPortaPatchPanelRequest extends FormRequest
         return [
             'sala_id' => 'required|exists:salas,id',
             'porta' => 'required|integer|min:1',
-            'tipo_porta_id' => 'nullable|exists:tipo_portas,id'
+            'tipo_porta_id' => 'nullable|exists:tipo_portas,id',
+            'tamanho' => 'nullable|numeric|min:0',
+            'comentario' => 'nullable|string|max:255',
         ];
     }
 
