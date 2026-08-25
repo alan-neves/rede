@@ -5,7 +5,7 @@
 <div class="card">
     <div class="card-header bg-usp">
         <div class="d-flex justify-content-between align-items-center">
-            <h1 class="h4 mb-0 text-dark"> 
+            <h1 class="h4 mb-0 text-dark">
                 <i class="fas fa-building"></i> {{ $predio->nome }}
             </h1>
             <a href="/" class="btn btn-secondary">
@@ -13,7 +13,7 @@
             </a>
         </div>
     </div>
-    
+
     <div class="card-body">
         @if($predio->descricao)
         <p><strong>Descrição:</strong> {{ $predio->descricao }}</p>
@@ -41,6 +41,7 @@
                                     <thead>
                                         <tr>
                                             <th>Nome</th>
+                                            <th>Descrição</th>
                                             <th width="220px">Ações</th>
                                         </tr>
                                     </thead>
@@ -48,6 +49,7 @@
                                         @foreach($salas as $sala)
                                         <tr>
                                             <td>{{ $sala->nome }}</td>
+                                            <td>{{ $sala->descricao }}</td>
                                             <td>
                                                 <a href="/salas/{{ $sala->id }}" class="btn btn-info btn-sm">Ver</a>
                                                 <a href="/salas/{{ $sala->id }}/edit" class="btn btn-warning btn-sm">Editar</a>
@@ -68,7 +70,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
