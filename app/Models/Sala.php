@@ -8,9 +8,10 @@ class Sala extends Model
 {
     protected $fillable = [
         'nome',
+        'descricao',
         'predio_id',
         'user_id',
-        'planta_id', 
+        'planta_id',
         'x',
         'y',
         'fontsize',
@@ -24,7 +25,7 @@ class Sala extends Model
     public function patchPanels()
     {
         return $this->belongsToMany(PatchPanel::class)
-                ->using(PatchPanelSala::class) 
+                ->using(PatchPanelSala::class)
                 ->withPivot('porta','user_id','tipo_porta_id')
                 ->withTimestamps();
     }

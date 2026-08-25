@@ -23,6 +23,7 @@ class SalaRequest extends FormRequest
     {
         return [
             'nome' => 'required|string|max:255',
+            'descricao' => 'nullable|max:255',
             'predio_id' => 'required|exists:predios,id'
         ];
 
@@ -34,6 +35,7 @@ class SalaRequest extends FormRequest
         return [
             'nome.required' => 'O nome da sala é obrigatório',
             'nome.max' => 'O nome não pode ter mais que 255 caracteres',
+            'descricao.max' => 'A descrição não pode ter mais que 255 caracteres',
             'predio_id.required' => 'O prédio é obrigatório',
         ];
     }
