@@ -16,7 +16,7 @@
         
         <!-- Texto com o tamanho dinamico vindo do banco -->
         <span style="color: #1e293b; font-size: {{ $size }}px; line-height: 1; white-space: nowrap; font-weight: 700; pointer-events: none; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;">
-            {{ optional(optional($marker->patchPanel)->rack)->nome }}{{ $marker->porta }}
+            {{ optional(optional($marker->patchPanel)->rack)->nome }}-{{$marker->patchPanel->nome}}-{{ $marker->porta }}
         </span>
     </div>
 @endforeach

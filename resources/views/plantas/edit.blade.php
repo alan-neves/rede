@@ -52,7 +52,7 @@
                     <option value="">-- Selecione --</option>
                     @foreach($pontosSemMarcacao as $ponto)
                         <option value="{{ $ponto->id }}">
-                            {{ optional(optional($ponto->patchPanel)->rack)->nome }}{{ $ponto->porta }} 
+                            {{ optional(optional($ponto->patchPanel)->rack)->nome }}-{{ $ponto->patchPanel->nome }}-{{ $ponto->porta }} 
                             @if($ponto->sala) ({{ $ponto->sala->nome }}) @endif
                         </option>
                     @endforeach
