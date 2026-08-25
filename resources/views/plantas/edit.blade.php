@@ -46,15 +46,24 @@
             <input type="hidden" name="y" id="inputY">
             <input type="hidden" name="planta_id" value="{{ $planta->id }}">
 
-            <select name="patch_panel_sala_id" id="patch_panel_sala_id" required style="width: 100%; padding: 5px; margin-bottom: 10px;">
-                <option value="">-- Selecione --</option>
-                @foreach($pontosSemMarcacao as $ponto)
-                    <option value="{{ $ponto->id }}">
-                        {{ optional(optional($ponto->patchPanel)->rack)->nome }}{{ $ponto->porta }} 
-                        @if($ponto->sala) ({{ $ponto->sala->nome }}) @endif
-                    </option>
-                @endforeach
-            </select>
+            <div style="margin-bottom: 8px;">
+                <label style="display: block; font-size: 11px; margin-bottom: 2px;">Ponto:</label>
+                <select name="patch_panel_sala_id" id="patch_panel_sala_id" required style="width: 100%; padding: 5px;">
+                    <option value="">-- Selecione --</option>
+                    @foreach($pontosSemMarcacao as $ponto)
+                        <option value="{{ $ponto->id }}">
+                            {{ optional(optional($ponto->patchPanel)->rack)->nome }}{{ $ponto->porta }} 
+                            @if($ponto->sala) ({{ $ponto->sala->nome }}) @endif
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- CAMPO ADICIONADO: Fontsize -->
+            <div style="margin-bottom: 10px;">
+                <label style="display: block; font-size: 11px; margin-bottom: 2px;">Tamanho da Fonte (px):</label>
+                <input type="number" name="fontsize" id="inputFontsize" value="12" min="6" max="40" required style="width: 100%; padding: 5px; box-sizing: border-box;">
+            </div>
 
             <div style="display: flex; justify-content: space-between; gap: 5px;">
                 <button type="submit" id="btnSalvar" style="cursor: pointer;">Salvar Ponto</button>

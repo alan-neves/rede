@@ -29,7 +29,7 @@
 
     </div>
 
-    <!-- Formulário Pop-up Nativo (Fora do panzoom-target para não sofrer distorção) -->
+    <!-- Formulário Pop-up Nativo -->
     <div id="popoverForm" style="display: none; position: absolute; background: #fff; border: 1px solid #000; padding: 12px; z-index: 1000; min-width: 250px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
 
         <strong id="formTitle" style="display: block; font-size: 13px; margin-bottom: 8px;">Selecione a Sala:</strong>
@@ -43,12 +43,21 @@
             <input type="hidden" name="y" id="inputY">
             <input type="hidden" name="planta_id" value="{{ $planta->id }}">
 
-            <select name="sala_select" id="sala_select" required style="width: 100%; padding: 5px; margin-bottom: 10px;" onchange="updateFormAction()">
-                <option value="">-- Selecione a Sala --</option>
-                @foreach($salasNotMarkerd as $sala)
-                    <option value="{{ $sala->id }}">{{ $sala->nome }}</option>
-                @endforeach
-            </select>
+            <div style="margin-bottom: 8px;">
+                <label style="display: block; font-size: 11px; margin-bottom: 2px;">Sala:</label>
+                <select name="sala_select" id="sala_select" required style="width: 100%; padding: 5px;" onchange="updateFormAction()">
+                    <option value="">-- Selecione a Sala --</option>
+                    @foreach($salasNotMarkerd as $sala)
+                        <option value="{{ $sala->id }}">{{ $sala->nome }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- CAMPO ADICIONADO: Tamanho da Fonte -->
+            <div style="margin-bottom: 10px;">
+                <label style="display: block; font-size: 11px; margin-bottom: 2px;">Tamanho da Fonte (px):</label>
+                <input type="number" name="fontsize" id="inputFontsize" value="12" min="6" max="50" required style="width: 100%; padding: 5px; box-sizing: border-box;">
+            </div>
 
             @if($salasNotMarkerd->isEmpty())
                 <p style="color: red; font-size: 11px; margin-top: 0;">Nenhuma sala pendente de marcação neste prédio.</p>
@@ -129,7 +138,7 @@
 
         panzoomTarget.addEventListener('panzoomend', function(e) {
             const dist = Math.hypot(e.detail.originalEvent.clientX - startX, e.detail.originalEvent.clientY - startY);
-            if (dist > 5) return; // Cancela se foi um movimento de arrasto
+            if (dist > 5) return;
 
             const originalEvent = e.detail.originalEvent;
             const targetElement = document.elementFromPoint(originalEvent.clientX, originalEvent.clientY);
@@ -160,6 +169,7 @@
                 document.getElementById('formTitle').innerText = 'Selecione a Sala:';
                 document.getElementById('inputX').value = xPercent.toFixed(2);
                 document.getElementById('inputY').value = yPercent.toFixed(2);
+                document.getElementById('inputFontsize').value = 12; // Reseta com o padrão 12px
 
                 salaSelect.value = "";
                 mainForm.action = "";
@@ -184,7 +194,6 @@
         });
     }
 
-    // Inicialização segura após o carregamento da imagem
     if (svgImage.complete) {
         initPanzoom();
     } else {

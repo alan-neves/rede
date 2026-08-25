@@ -13,6 +13,7 @@ class Sala extends Model
         'planta_id', 
         'x',
         'y',
+        'fontsize',
     ];
 
     public function predio()

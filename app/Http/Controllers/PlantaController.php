@@ -96,6 +96,7 @@ class PlantaController extends Controller
             'planta_id'           => 'required|exists:plantas,id',
             'x'                   => 'required|numeric',
             'y'                   => 'required|numeric',
+            'fontsize'            => 'nullable|integer|min:6|max:50',
         ]);
 
         // Atualiza a linha existente atribuindo as coordenadas e a planta_id
@@ -104,6 +105,7 @@ class PlantaController extends Controller
             'x'         => $validated['x'],
             'y'         => $validated['y'],
             'planta_id' => $validated['planta_id'],
+            'fontsize'  => $request->fontsize ?? 12,
         ]);
 
         return redirect()->back()->with('success', 'Ponto vinculado à planta com sucesso!');

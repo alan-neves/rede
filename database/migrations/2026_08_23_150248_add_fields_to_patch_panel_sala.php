@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('patch_panel_sala', function (Blueprint $table) {
             $table->decimal('x', 8, 2)->nullable();
             $table->decimal('y', 8, 2)->nullable();
+            $table->integer('fontsize')->nullable()->default(12);
             $table->string('comentario')->nullable();
             $table->decimal('tamanho', 8, 2)->nullable();
             $table->unsignedBigInteger('planta_id')->nullable();

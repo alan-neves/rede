@@ -19,6 +19,7 @@ protected $fillable = [
         'comentario',
         'tamanho',
         'planta_id',
+        'fontsize',
     ];
 
     public function tipoPorta()

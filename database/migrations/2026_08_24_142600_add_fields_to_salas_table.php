@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('salas', function (Blueprint $table) {
             $table->decimal('x', 8, 2)->nullable();
             $table->decimal('y', 8, 2)->nullable();
+            $table->integer('fontsize')->nullable()->default(12);
             $table->unsignedBigInteger('planta_id')->nullable();
             $table->foreign('planta_id')->references('id')->on('plantas')->onDelete('set null');
         });
