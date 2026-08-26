@@ -241,7 +241,7 @@ class SalaController extends Controller
             'planta_id'           => 'required|exists:plantas,id',
             'x'                   => 'required|numeric',
             'y'                   => 'required|numeric',
-            'fontsize'            => 'nullable|integer|min:6|max:50',
+            'fontsize'            => 'nullable|integer|min:2|max:50',
         ]);
 
         // Atualiza a linha existente atribuindo as coordenadas e a planta_id
