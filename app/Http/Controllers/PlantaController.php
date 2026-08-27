@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\Predio;
 use Illuminate\Support\Facades\Storage;
 use App\Models\PatchPanelSala;
+use App\Models\TipoPorta;
 
 class PlantaController extends Controller
 {
@@ -79,36 +80,76 @@ class PlantaController extends Controller
             })
             ->whereNull('x')
             ->whereNull('y')
-            ->get();
+            ->get()
+            ->sortBy([
+                fn ($a, $b) => (optional(optional($a->patchPanel)->rack)->nome ?? '') <=> (optional(optional($b->patchPanel)->rack)->nome ?? ''),
+                fn ($a, $b) => (optional($a->patchPanel)->nome ?? '') <=> (optional($b->patchPanel)->nome ?? ''),
+                fn ($a, $b) => ($a->porta ?? 0) <=> ($b->porta ?? 0),
+            ])
+            ->values(); // Reindexa a coleção
+
+        // Busca todos os tipos de porta disponíveis
+        $tipoPortas = TipoPorta::all();
 
         return view('plantas.edit', [
             'planta' => $planta,
             'markers' => $markers,
             'salasMarkerd' => $salasMarkerd,
             'pontosSemMarcacao' => $pontosSemMarcacao,
+            'tipoPortas' => $tipoPortas, // Passado para o Blade
         ]);
     }
 
     public function update(Planta $planta, Request $request)
     {
+        // Tornamos os campos de formulário opcionais no request para requisições via Drag & Drop
         $validated = $request->validate([
             'patch_panel_sala_id' => 'required|exists:patch_panel_sala,id',
             'planta_id'           => 'required|exists:plantas,id',
             'x'                   => 'required|numeric',
             'y'                   => 'required|numeric',
             'fontsize'            => 'nullable|integer|min:6|max:50',
+            'tipo_porta_id'       => 'nullable|exists:tipo_portas,id',
+            'comentario'          => 'nullable|string|max:500',
+            'tamanho'             => 'nullable|numeric',
         ]);
 
-        // Atualiza a linha existente atribuindo as coordenadas e a planta_id
         $ponto = PatchPanelSala::findOrFail($validated['patch_panel_sala_id']);
-        $ponto->update([
+
+        // Monta o array com as coordenadas enviadas
+        $dadosParaAtualizar = [
             'x'         => $validated['x'],
             'y'         => $validated['y'],
             'planta_id' => $validated['planta_id'],
-            'fontsize'  => $request->fontsize ?? 12,
-        ]);
+        ];
 
-        return redirect()->back()->with('success', 'Ponto vinculado à planta com sucesso!');
+        // Atualiza os outros campos SOMENTE se eles estiverem presentes no request
+        if ($request->has('fontsize')) {
+            $dadosParaAtualizar['fontsize'] = $request->fontsize;
+        }
+        if ($request->has('tipo_porta_id')) {
+            $dadosParaAtualizar['tipo_porta_id'] = $request->tipo_porta_id;
+        }
+        if ($request->has('comentario')) {
+            $dadosParaAtualizar['comentario'] = $request->comentario;
+        }
+        if ($request->has('tamanho')) {
+            $dadosParaAtualizar['tamanho'] = $request->tamanho;
+        }
+
+        // Executa a atualização sem alterar os dados não enviados
+        $ponto->update($dadosParaAtualizar);
+
+        // Retorna JSON para chamadas AJAX/Fetch (Drag & Drop)
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Posição atualizada com sucesso!',
+                'data'    => $ponto
+            ], 200);
+        }
+
+        return redirect()->back()->with('success', 'Ponto atualizado com sucesso!');
     }
 
     public function destroy(Predio $predio, Planta $planta)
