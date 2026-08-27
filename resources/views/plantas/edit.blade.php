@@ -101,7 +101,7 @@
             <!-- Tamanho da Fonte -->
             <div style="margin-bottom: 12px;">
                 <label style="display: block; font-size: 11px; margin-bottom: 2px;">Tamanho da Fonte (px):</label>
-                <input type="number" name="fontsize" id="inputFontsize" value="12" min="6" max="40" required style="width: 100%; padding: 5px; box-sizing: border-box; font-size: 12px;">
+                <input type="number" name="fontsize" id="inputFontsize" value="12" min="2" max="40" required style="width: 100%; padding: 5px; box-sizing: border-box; font-size: 12px;">
             </div>
 
             <!-- Ações do Formulário principal -->
