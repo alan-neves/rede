@@ -57,7 +57,7 @@
                                 data-comentario="{{ $ponto->comentario }}"
                                 data-tamanho="{{ $ponto->tamanho }}"
                                 data-fontsize="{{ $ponto->fontsize ?? 12 }}">
-                            {{ optional(optional($ponto->patchPanel)->rack)->nome }}-{{ $ponto->patchPanel->nome }}-{{ $ponto->porta }} 
+                            {{ optional(optional($ponto->patchPanel)->rack)->nome }}-{{ optional($ponto->patchPanel)->nome }}-{{ $ponto->porta }} 
                             @if($ponto->sala) ({{ $ponto->sala->nome }}) @endif
                         </option>
                     @endforeach
@@ -86,7 +86,7 @@
             <!-- Comentário -->
             <div style="margin-bottom: 8px;">
                 <label for="comentario" style="display: block; font-size: 11px; margin-bottom: 2px;">Comentário (Opcional):</label>
-                <input type="text" name="comentario" id="comentario" style="width: 100%; padding: 5px; box-sizing: border-box; font-size: 12px;">
+                <input type="text" name="comentario" id="comentario" placeholder="Ex: Atrás da mesa" style="width: 100%; padding: 5px; box-sizing: border-box; font-size: 12px;">
             </div>
 
             <!-- Comprimento Cabeamento Horizontal (tamanho) -->
@@ -124,6 +124,7 @@
     </div>
 
 </div>
+
 <script>
     const viewport = document.getElementById('viewport');
     const panzoomTarget = document.getElementById('panzoom-target');
@@ -153,7 +154,7 @@
         document.getElementById('btnZoomOut').addEventListener('click', panzoom.zoomOut);
         document.getElementById('btnZoomReset').addEventListener('click', panzoom.reset);
 
-        // Atrela os eventos de arrasto nos marcadores
+        // Atrela eventos de arrasto (drag & drop) e tooltip hover nos marcadores
         makeMarkersDraggable();
 
         let startX = 0;
@@ -207,7 +208,7 @@
         document.getElementById('formMethod').value = 'PUT';
         document.getElementById('btnSalvar').innerText = 'Atualizar Ponto';
 
-        // Garante ou cria o input hidden com o ID do ponto (patch_panel_sala_id)
+        // Garante ou cria o input hidden com o ID do ponto
         let inputHiddenPonto = document.getElementById('hidden_patch_panel_sala_id');
         if (!inputHiddenPonto) {
             inputHiddenPonto = document.createElement('input');
@@ -228,7 +229,7 @@
         divReadonlyPonto.style.display = 'block';
         document.getElementById('inputPontoNome').value = markerNome;
 
-        // Preenche os campos do formulário
+        // Preenche os campos do formulário com os datasets do elemento
         if (document.getElementById('tipo_porta_id')) {
             document.getElementById('tipo_porta_id').value = marker.dataset.tipo || '';
         }
@@ -242,7 +243,7 @@
             document.getElementById('inputFontsize').value = marker.dataset.fontsize || '12';
         }
 
-        // Configura a rota de desmarcar (unmark)
+        // Configura rota de remoção
         deleteForm.action = `/plantas/${markerId}/unmark`;
         deleteForm.style.display = 'block';
 
@@ -295,9 +296,17 @@
         markers.forEach(marker => {
             marker.style.cursor = 'grab';
 
+            // Adiciona o atributo 'title' nativo para exibir o comentário ao passar o mouse
+            const nome = marker.dataset.nome || '';
+            const comentario = marker.dataset.comentario || '';
+            let tooltipText = nome;
+            if (comentario) {
+                tooltipText += `\nObs: ${comentario}`;
+            }
+            marker.setAttribute('title', tooltipText);
+
             marker.addEventListener('pointerdown', function(e) {
-                // Impede o panzoom de arrastar o mapa quando clicamos direto no ponto
-                e.stopPropagation();
+                e.stopPropagation(); // Impede que o panzoom arraste o mapa
 
                 const currentMarker = this;
                 let isMove = false;
@@ -398,17 +407,17 @@
                 const tamanho = selectedOption.getAttribute('data-tamanho') || '';
                 const fontsize = selectedOption.getAttribute('data-fontsize') || '12';
 
-                document.getElementById('tipo_porta_id').value = tipo;
-                document.getElementById('comentario').value = comentario;
-                document.getElementById('tamanho').value = tamanho;
-                document.getElementById('inputFontsize').value = fontsize;
+                if (document.getElementById('tipo_porta_id')) document.getElementById('tipo_porta_id').value = tipo;
+                if (document.getElementById('comentario')) document.getElementById('comentario').value = comentario;
+                if (document.getElementById('tamanho')) document.getElementById('tamanho').value = tamanho;
+                if (document.getElementById('inputFontsize')) document.getElementById('inputFontsize').value = fontsize;
             } else {
                 limparCamposFormulario();
             }
         });
     }
 
-    // Inicializa quando o DOM e a Imagem estiverem prontos
+    // Inicialização
     if (svgImage.complete) {
         initPanzoom();
     } else {

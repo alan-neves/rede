@@ -108,10 +108,7 @@ class PlantaController extends Controller
             'planta_id'           => 'required|exists:plantas,id',
             'x'                   => 'required|numeric',
             'y'                   => 'required|numeric',
-            'fontsize'            => 'nullable|integer|min:6|max:50',
-            'tipo_porta_id'       => 'nullable|exists:tipo_portas,id',
-            'comentario'          => 'nullable|string|max:500',
-            'tamanho'             => 'nullable|numeric',
+            'fontsize'            => 'nullable|integer|min:2|max:50',
         ]);
 
         $ponto = PatchPanelSala::findOrFail($validated['patch_panel_sala_id']);
