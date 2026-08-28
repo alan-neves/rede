@@ -7,16 +7,27 @@
 <div class="container-fluid py-3">
     <!-- Controles Superiores -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <!-- Botão Voltar -->
         <a href="/plantas/{{ $planta->predio_id }}" style="text-decoration: none; color: #000; background-color: #f0f0f0; padding: 6px 12px; border-radius: 4px; font-size: 14px;">
             &larr; Voltar
         </a>
 
-        <!-- Barra de Controles de Zoom -->
-        <div style="display: flex; gap: 5px; align-items: center; background: #f8fafc; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
-            <button type="button" id="btnZoomIn" style="padding: 4px 10px; font-weight: bold; cursor: pointer;">+</button>
-            <button type="button" id="btnZoomOut" style="padding: 4px 10px; font-weight: bold; cursor: pointer;">-</button>
-            <button type="button" id="btnZoomReset" style="padding: 4px 10px; cursor: pointer; font-size: 12px;">Redefinir Zoom</button>
-            <span style="font-size: 11px; color: #64748b; margin-left: 5px;">(Use o scroll do mouse ou clique e arraste para mover)</span>
+        <!-- Lado Direito: Controles de Zoom + Botão PDF -->
+        <div style="display: flex; gap: 10px; align-items: center;">
+            
+            <!-- Botão Gerar PDF -->
+            <a href="/plantas/pdf/{{ $planta->id }}" target="_blank" style="text-decoration: none; color: #fff; background-color: #dc2626; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+                📄 Exportar PDF
+            </a>
+
+            <!-- Barra de Controles de Zoom -->
+            <div style="display: flex; gap: 5px; align-items: center; background: #f8fafc; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                <button type="button" id="btnZoomIn" style="padding: 4px 10px; font-weight: bold; cursor: pointer;">+</button>
+                <button type="button" id="btnZoomOut" style="padding: 4px 10px; font-weight: bold; cursor: pointer;">-</button>
+                <button type="button" id="btnZoomReset" style="padding: 4px 10px; cursor: pointer; font-size: 12px;">Redefinir Zoom</button>
+                <span style="font-size: 11px; color: #64748b; margin-left: 5px;">(Use o scroll do mouse ou clique e arraste para mover)</span>
+            </div>
+
         </div>
     </div>
 
@@ -31,7 +42,7 @@
 
             <!-- Renderização dos Marcadores Visíveis -->
             @include('plantas.partials.markers', ['markers' => $markers])
-
+            @include('salas.partials.markers', ['salas' => $planta->salas])
         </div>
     </div>
 

@@ -14,13 +14,13 @@
 
         .header {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border-bottom: 2px solid #0d6efd;
-            padding-bottom: 8px;
+            padding-bottom: 6px;
         }
 
         .header h2 {
-            margin: 0 0 5px 0;
+            margin: 0 0 4px 0;
             font-size: 18px;
             color: #0d6efd;
         }
@@ -31,30 +31,27 @@
             color: #666;
         }
 
-        /* Container da Imagem da Planta */
+        /* Container da Imagem Compilada */
         .map-container {
             width: 100%;
-            margin-bottom: 15px;
             text-align: center;
+            margin-bottom: 15px;
             border: 1px solid #cbd5e1;
-            background-color: #ffffff;
         }
 
         .map-container img {
             width: 100%;
-            max-height: 500px;
             height: auto;
             display: block;
-            margin: 0 auto;
         }
 
-        /* Mensagem do Link Público */
+        /* Caixa de aviso com Link Público */
         .public-link-box {
             background-color: #f0f9ff;
             border: 1px solid #bae6fd;
             border-radius: 4px;
-            padding: 10px 14px;
-            margin-bottom: 20px;
+            padding: 8px 12px;
+            margin-bottom: 15px;
             font-size: 11px;
             color: #0369a1;
         }
@@ -65,7 +62,7 @@
             text-decoration: underline;
         }
 
-        /* Tabela */
+        /* Tabela Detalhada */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -73,7 +70,7 @@
 
         th, td {
             border: 1px solid #cbd5e1;
-            padding: 6px 8px;
+            padding: 5px 7px;
             text-align: left;
         }
 
@@ -85,7 +82,6 @@
         .room-header {
             background-color: #e2e8f0;
             font-weight: bold;
-            text-align: center;
             text-transform: uppercase;
         }
 
@@ -95,7 +91,7 @@
 
         .badge {
             display: inline-block;
-            padding: 2px 6px;
+            padding: 2px 5px;
             font-size: 9px;
             color: #fff;
             border-radius: 3px;
@@ -104,31 +100,31 @@
 </head>
 <body>
 
-    <!-- Cabeçalho -->
     <div class="header">
         <h2>{{ $planta->name }}</h2>
         <p>Prédio: {{ optional($planta->predio)->nome ?? 'N/A' }}</p>
     </div>
 
-    <!-- Imagem SVG da Planta Baixa com Marcadores Injetados -->
-    @if($svgBase64)
-        <div class="map-container">
-            <img src="{{ $svgBase64 }}" alt="{{ $planta->name }}">
-        </div>
+    <!-- Planta Convertida com Marcadores Injetados -->
+    @if($pngBase64)
+    <div class="map-container">
+        <img src="{{ $pngBase64 }}" alt="{{ $planta->name }}">
+    </div>
     @endif
 
-    <!-- Caixa com Mensagem e Link para Versão Pública Vetorial -->
+    <!-- Aviso com Link Público -->
     <div class="public-link-box">
-        <strong>Atenção:</strong> Acesse a versão vetorial e interativa desta planta com as marcações em:
+        <strong>Atenção:</strong> Acesse a versão interativa e detalhada desta planta em:
         <br>
         <a href="{{ $publicUrl }}" target="_blank">{{ $publicUrl }}</a>
     </div>
 
-    <!-- Tabela Detalhada de Pontos -->
+    <!-- Tabela com Mapeamento ID -> Ponto -->
     <table>
         <thead>
             <tr>
-                <th>Ponto</th>
+                <th style="width: 40px;" class="text-center">ID</th>
+                <th>Ponto (Rack - Patch - Porta)</th>
                 <th>Sala</th>
                 <th>Tipo</th>
                 <th class="text-end">Comprimento</th>
@@ -136,9 +132,8 @@
         </thead>
         <tbody>
             @forelse($markers->groupBy(fn($item) => optional($item->sala)->nome ?? 'Sem Sala Definida') as $nomeSala => $pontosDaSala)
-                <!-- Cabeçalho da Sala -->
                 <tr class="room-header">
-                    <td colspan="4">
+                    <td colspan="5" style="text-align: center;">
                         {{ $nomeSala }}
                         @php $salaObj = $pontosDaSala->first()?->sala; @endphp
                         @if($salaObj && !empty($salaObj->descricao))
@@ -147,14 +142,14 @@
                     </td>
                 </tr>
 
-                <!-- Pontos da Sala -->
                 @foreach($pontosDaSala as $ponto)
                     @php
                         $nomePonto = optional(optional($ponto->patchPanel)->rack)->nome . '-' . optional($ponto->patchPanel)->nome . '-' . $ponto->porta;
                         $corTipo = optional($ponto->tipoPorta)->cor ?? '#ef4444';
                     @endphp
                     <tr>
-                        <td class="fw-bold" style="padding-left: 15px;">{{ $nomePonto }}</td>
+                        <td class="text-center fw-bold">{{ $ponto->id }}</td>
+                        <td class="fw-bold">{{ $nomePonto }}</td>
                         <td>{{ optional($ponto->sala)->nome ?? '-' }}</td>
                         <td>
                             <span class="badge" style="background-color: {{ $corTipo }};">
@@ -168,13 +163,13 @@
                 @endforeach
             @empty
                 <tr>
-                    <td colspan="4" class="text-center">Nenhum ponto visível nesta planta.</td>
+                    <td colspan="5" class="text-center">Nenhum ponto visível nesta planta.</td>
                 </tr>
             @endforelse
         </tbody>
         <tfoot>
             <tr style="background-color: #333; color: #fff;">
-                <td colspan="3" class="text-end fw-bold">Comprimento Total da Planta:</td>
+                <td colspan="4" class="text-end fw-bold">Comprimento Total da Planta:</td>
                 <td class="text-end fw-bold">
                     {{ number_format($markers->sum('tamanho'), 2, ',', '.') }} m
                 </td>
