@@ -469,4 +469,41 @@
         }
         limparCamposFormulario();
     }
+
+    // Previne zoom por atalhos de teclado (Ctrl +, Ctrl -, Ctrl 0, Cmd +, etc.)
+    window.addEventListener('keydown', function (e) {
+        if (
+            (e.ctrlKey || e.metaKey) &&
+            (
+                e.key === '+' ||
+                e.key === '-' ||
+                e.key === '=' ||
+                e.key === '0' ||
+                e.code === 'NumpadAdd' ||
+                e.code === 'NumpadSubtract'
+            )
+        ) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    // Previne zoom através da roda do mouse segurando Ctrl (Ctrl + Scroll)
+    window.addEventListener('wheel', function (e) {
+        if (e.ctrlKey) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    // Previne zoom por gesto de pinça em touchpads / telas touch
+    window.addEventListener('touchstart', function (e) {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    window.addEventListener('touchmove', function (e) {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+    }, { passive: false });
 </script>
