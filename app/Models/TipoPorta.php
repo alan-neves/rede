@@ -9,6 +9,7 @@ class TipoPorta extends Model
     protected $fillable = [
         'nome',
         'user_id',
+        'cor'
     ];
 
     public function user()

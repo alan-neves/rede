@@ -6,6 +6,9 @@
         
         $tooltipText = !empty($marker->comentario) ? $nomeFormatado . ' — ' . $marker->comentario : $nomeFormatado;
 
+        // Recupera a cor do tipo de porta ou define vermelho (#ef4444) como fallback
+        $corMarcador = optional($marker->tipoPorta)->cor ?? '#ef4444';
+
         // Distância segura em pixels entre o texto e o triângulo
         $spacing = max(2, round($size * 0.3)) . 'px';
 
@@ -42,9 +45,9 @@
          data-tooltip="{{ $tooltipText }}"
          style="position: absolute; left: {{ $marker->x }}%; top: {{ $marker->y }}%; transform: translate(-50%, -50%); cursor: pointer; z-index: 10; display: inline-flex; align-items: center; justify-content: center; {{ $flexStyles }}">
         
-        <!-- Ícone (Triângulo Vermelho) -->
+        <!-- Ícone (Triângulo Dinâmico) -->
         <svg width="{{ $size }}" height="{{ $size }}" viewBox="0 0 100 100" style="display: block; pointer-events: none; flex-shrink: 0;">
-            <polygon points="50,15 90,85 10,85" fill="#ef4444" stroke="#ffffff" stroke-width="8" />
+            <polygon points="50,15 90,85 10,85" fill="{{ $corMarcador }}" stroke="#ffffff" stroke-width="8" />
         </svg>
         
         <!-- Texto com margem direcional proporcional ao tamanho da fonte -->

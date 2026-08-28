@@ -29,6 +29,11 @@ class TipoPortaRequest extends FormRequest
                 'max:255',
                 Rule::unique('tipo_portas')->ignore($this->route('tipoPorta'))
             ],
+            'cor' => [
+                'nullable',
+                'string',
+                'hex_color',
+            ],
         ];
     }
 
