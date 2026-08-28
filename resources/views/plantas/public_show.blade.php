@@ -57,6 +57,12 @@
                             <tr class="table-secondary">
                                 <td colspan="4" class="fw-bold text-uppercase py-2 text-center">
                                     <i class="bi bi-door-closed me-1"></i> {{ $nomeSala }}
+                                    @php
+                                        $salaObj = $pontosDaSala->first()?->sala;
+                                    @endphp
+                                    @if($salaObj && !empty($salaObj->descricao))
+                                        <span class="text-muted fw-normal text-lowercase"> — {{ $salaObj->descricao }}</span>
+                                    @endif
                                 </td>
                             </tr>
 
