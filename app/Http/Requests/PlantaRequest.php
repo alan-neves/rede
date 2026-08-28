@@ -22,10 +22,14 @@ class PlantaRequest extends FormRequest
      */
     public function rules(): array
     {
+        // Define 'required' na criação (POST) e 'nullable' na edição (PUT/PATCH)
+        $plantaRule = $this->isMethod('post') ? 'required' : 'nullable';
+
         return [
             'name'      => 'required|string|max:255',
-            'planta'    => 'required|file|mimes:svg',
+            'planta'    => [$plantaRule, 'file', 'mimes:svg'],
             'predio_id' => 'required|exists:predios,id',
+            'public'    => 'nullable|boolean',
         ];
     }
 }

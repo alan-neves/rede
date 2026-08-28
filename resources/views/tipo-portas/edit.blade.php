@@ -14,7 +14,7 @@
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome *</label>
                 <input type="text" 
-                       class="form-control @error('nome') is-invalid @enderror" 
+                       class="form-control" 
                        id="nome" 
                        name="nome" 
                        value="{{ old('nome', $tipoPorta->nome) }}" 
@@ -33,7 +33,7 @@
                            onchange="document.getElementById('cor').value = this.value">
                     
                     <input type="text" 
-                           class="form-control @error('cor') is-invalid @enderror" 
+                           class="form-control" 
                            id="cor" 
                            name="cor" 
                            value="{{ old('cor', $tipoPorta->cor ?? '#FF0000') }}" 

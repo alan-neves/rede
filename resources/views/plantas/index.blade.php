@@ -25,6 +25,9 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span class="fw-bold text-secondary">{{ $planta->name }}</span>
                     <div>
+                        <a href="/plantas/{{$planta->id}}/edit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit"></i> Editar Planta
+                        </a>
                         <a href="/salas/{{$planta->id}}/markers" class="btn btn-primary btn-sm">
                             <i class="fas fa-edit"></i> Marcar Salas
                         </a>

@@ -49,6 +49,48 @@ class PlantaController extends Controller
         return redirect()->back()->with('success', 'Planta enviada com sucesso!');
     }
 
+    public function edit(Planta $planta)
+    {
+        // Se a planta NÃO for pública, exige a autorização do Gate 'admin'
+        if (!$planta->public) {
+            Gate::authorize('admin');
+        }
+
+        return view('plantas.edit', [
+            'planta' => $planta,
+        ]);
+    }
+
+    public function update(PlantaRequest $request, Planta $planta)
+    {
+        // Se a planta NÃO for pública, exige permissão de admin
+        if (!$planta->public) {
+            Gate::authorize('admin');
+        }
+
+        $planta->name = $request->input('name');
+        $planta->predio_id = $request->input('predio_id');
+        
+        // Converte o valor do checkbox/switch para booleano
+        $planta->public = $request->boolean('public');
+
+        // Se um novo arquivo SVG foi enviado, remove o antigo e armazena o novo
+        if ($request->hasFile('planta')) {
+            if ($planta->path && Storage::exists($planta->path)) {
+                Storage::delete($planta->path);
+            }
+
+            $file = $request->file('planta');
+            $planta->path = $file->store('plantas');
+            $planta->original_name = $file->getClientOriginalName();
+        }
+
+        $planta->save();
+
+        return redirect("/plantas/{$planta->predio_id}")
+            ->with('success', 'Planta atualizada com sucesso!');
+    }
+
     public function show(Predio $predio, Planta $planta)
     {
         Gate::authorize('admin');

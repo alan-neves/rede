@@ -15,7 +15,7 @@
             
             <div class="mb-3">
                 <label for="rack_id" class="form-label">Rack *</label>
-                <select class="form-select @error('rack_id') is-invalid @enderror" id="rack_id" name="rack_id">
+                <select class="form-select" id="rack_id" name="rack_id">
                     <option value="">Selecione um rack</option>
                     @foreach($racks as $rack)
                         <option value="{{ $rack->id }}" 
@@ -24,49 +24,34 @@
                         </option>
                     @endforeach
                 </select>
-                @error('rack_id')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
             </div>
             
             <div class="mb-3">
                 <label for="hostname" class="form-label">Hostname *</label>
-                <input type="text" class="form-control @error('hostname') is-invalid @enderror" 
+                <input type="text" class="form-control" 
                        id="hostname" name="hostname" value="{{ old('hostname') }}"
                        placeholder="Ex: switch-01">
-                @error('hostname')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
             </div>
             
             <div class="mb-3">
                 <label for="model" class="form-label">Modelo *</label>
-                <input type="text" class="form-control @error('model') is-invalid @enderror" 
+                <input type="text" class="form-control" 
                        id="model" name="model" value="{{ old('model') }}"
                        placeholder="Ex: hp_comware" >
-                @error('model')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
             </div>
             
             <div class="mb-3">
                 <label for="ip" class="form-label">IP *</label>
-                <input type="text" class="form-control @error('ip') is-invalid @enderror" 
+                <input type="text" class="form-control" 
                        id="ip" name="ip" value="{{ old('ip') }}"
                        placeholder="Ex: 192.168.1.1">
-                @error('ip')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
             </div>
             
             <div class="mb-3">
                 <label for="qtde_portas" class="form-label">Quantidade de Portas *</label>
-                <input type="number" class="form-control @error('qtde_portas') is-invalid @enderror" 
+                <input type="number" class="form-control" 
                        id="qtde_portas" name="qtde_portas" value="{{ old('qtde_portas') }}"
                        min="1" max="48" placeholder="Ex: 24">
-                @error('qtde_portas')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
             </div>
 
             <div class="mb-3">
@@ -77,9 +62,6 @@
                         Equipamento possui PoE (Power over Ethernet)
                     </label>
                 </div>
-                @error('poe_type')
-                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
             </div>
             
             <div class="d-flex justify-content-between">
