@@ -38,7 +38,7 @@
         <strong id="formTitle" style="display: block; font-size: 13px; margin-bottom: 8px;">Selecione o Ponto:</strong>
 
         <!-- Formulário Unificado: Salvar/Atualizar -->
-        <form action="/plantas/{{ $planta->id }}" method="POST" id="mainForm">
+        <form action="/plantas/{{ $planta->id }}/mark" method="POST" id="mainForm">
             @csrf
             <input type="hidden" name="_method" id="formMethod" value="PUT">
 
@@ -216,7 +216,7 @@
 
         document.getElementById('formTitle').innerText = 'Editar Ponto: ' + markerNome;
 
-        mainForm.action = "/plantas/{{ $planta->id }}";
+        mainForm.action = "/plantas/{{ $planta->id }}/mark";
         document.getElementById('formMethod').value = 'PUT';
         document.getElementById('btnSalvar').innerText = 'Atualizar Ponto';
 
@@ -279,7 +279,7 @@
         }
 
         document.getElementById('formTitle').innerText = 'Selecione o Ponto:';
-        mainForm.action = "/plantas/{{ $planta->id }}";
+        mainForm.action = "/plantas/{{ $planta->id }}/mark";
         document.getElementById('formMethod').value = 'PUT';
 
         document.getElementById('inputX').value = x.toFixed(2);
@@ -297,16 +297,31 @@
 
     function posicionarPopover(event) {
         const viewportRect = viewport.getBoundingClientRect();
+        
+        // Tornamos visível temporariamente para medir as dimensões reais do formulário
+        popoverForm.style.display = 'block';
+        const formWidth = popoverForm.offsetWidth || 280;
+        const formHeight = popoverForm.offsetHeight || 380;
+
         let popoverX = event.clientX - viewportRect.left;
         let popoverY = event.clientY - viewportRect.top;
 
-        if (popoverX + 280 > viewportRect.width) {
-            popoverX -= 280;
+        // Ajuste no eixo X (Direita/Esquerda)
+        if (popoverX + formWidth > viewportRect.width) {
+            popoverX -= formWidth;
         }
+
+        // Ajuste no eixo Y (Cima/Baixo) para pontos perto do rodapé
+        if (popoverY + formHeight > viewportRect.height) {
+            popoverY -= formHeight;
+        }
+
+        // Garantia de segurança para não ultrapassar o topo ou a esquerda da tela
+        popoverX = Math.max(10, popoverX);
+        popoverY = Math.max(10, popoverY);
 
         popoverForm.style.left = popoverX + 'px';
         popoverForm.style.top = popoverY + 'px';
-        popoverForm.style.display = 'block';
     }
 
     function makeMarkersDraggable() {
@@ -385,7 +400,7 @@
     function salvarNovaPosicao(id, x, y) {
         const token = document.querySelector('input[name="_token"]')?.value;
 
-        fetch(`/plantas/{{ $planta->id }}`, {
+        fetch(`/plantas/{{ $planta->id }}/mark`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

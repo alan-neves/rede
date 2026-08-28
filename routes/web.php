@@ -29,7 +29,6 @@ Route::get('/salas/{planta}/markers', [SalaController::class, 'markers']);
 Route::delete('/salas/{sala}/unmark', [SalaController::class, 'unmark']);
 Route::put('/salas/{sala}/{planta}/mark', [SalaController::class, 'mark']);
 
-
 Route::get('/salas/{sala}', [SalaController::class, 'show']);
 Route::get('/salas/{sala}/edit', [SalaController::class, 'edit']);
 Route::put('/salas/{sala}', [SalaController::class, 'update']);
@@ -72,9 +71,9 @@ Route::delete('/tipo-portas/{tipoPorta}', [TipoPortaController::class, 'destroy'
 
 // Plantas
 Route::post('/plantas/{predio}', [PlantaController::class, 'store']);
-Route::get('/plantas/{planta}/edit', [PlantaController::class, 'edit']);
+Route::get('/plantas/{planta}/mark', [PlantaController::class, 'editMark']);
 Route::delete('/plantas/{patch_panel_sala_id}/unmark', [PlantaController::class, 'unmark']);
-Route::put('/plantas/{planta}', [PlantaController::class, 'update']);
+Route::put('/plantas/{planta}/mark', [PlantaController::class, 'mark']);
 Route::get('/plantas/{predio}/{planta}', [PlantaController::class, 'show']);
 Route::get('/plantas/{predio}', [PlantaController::class, 'index']);
 Route::delete('/plantas/{predio}/{planta}', [PlantaController::class, 'destroy']);

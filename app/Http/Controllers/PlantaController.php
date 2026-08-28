@@ -55,7 +55,7 @@ class PlantaController extends Controller
         return Storage::download($planta->path, $planta->original_name);
     }
 
-    public function edit(Planta $planta)
+    public function editMark(Planta $planta)
     {
         Gate::authorize('admin');
 
@@ -91,7 +91,7 @@ class PlantaController extends Controller
         // Busca todos os tipos de porta disponíveis
         $tipoPortas = TipoPorta::all();
 
-        return view('plantas.edit', [
+        return view('plantas.mark', [
             'planta' => $planta,
             'markers' => $markers,
             'salasMarkerd' => $salasMarkerd,
@@ -100,7 +100,7 @@ class PlantaController extends Controller
         ]);
     }
 
-    public function update(Planta $planta, Request $request)
+    public function mark(Planta $planta, Request $request)
     {
         // Tornamos os campos de formulário opcionais no request para requisições via Drag & Drop
         $validated = $request->validate([

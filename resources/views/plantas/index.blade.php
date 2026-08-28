@@ -28,7 +28,7 @@
                         <a href="/salas/{{$planta->id}}/markers" class="btn btn-primary btn-sm">
                             <i class="fas fa-edit"></i> Marcar Salas
                         </a>
-                        <a href="/plantas/{{$planta->id}}/edit" class="btn btn-primary btn-sm">
+                        <a href="/plantas/{{$planta->id}}/mark" class="btn btn-primary btn-sm">
                             <i class="fas fa-edit"></i> Marcar planta
                         </a>
                         <form action="/plantas/{{$planta->predio_id}}/{{$planta->id}}" method="post" class="d-inline">
