@@ -237,22 +237,42 @@ class SalaController extends Controller
 
     public function mark(Sala $sala, Planta $planta, Request $request)
     {
+        Gate::authorize('admin');
+
         $validated = $request->validate([
-            'planta_id'           => 'required|exists:plantas,id',
-            'x'                   => 'required|numeric',
-            'y'                   => 'required|numeric',
-            'fontsize'            => 'nullable|integer|min:2|max:50',
+            'planta_id' => 'required|exists:plantas,id',
+            'x'         => 'required|numeric',
+            'y'         => 'required|numeric',
+            'fontsize'  => 'nullable|integer|min:2|max:50',
+            'descricao' => 'nullable|string|max:255', // Adicionada validação da descrição
         ]);
 
-        // Atualiza a linha existente atribuindo as coordenadas e a planta_id
-        $sala->update([
+        $dadosAtualizacao = [
             'x'         => $validated['x'],
             'y'         => $validated['y'],
             'planta_id' => $validated['planta_id'],
-            'fontsize' => $request->fontsize ?? 12,
-        ]);
+        ];
 
-        return redirect()->back()->with('success', 'Sala vinculado à planta com sucesso!');
+        if ($request->has('descricao')) {
+            $dadosAtualizacao['descricao'] = $validated['descricao'];
+        }
+
+        if ($request->filled('fontsize')) {
+            $dadosAtualizacao['fontsize'] = $validated['fontsize'];
+        } elseif (is_null($sala->fontsize)) {
+            $dadosAtualizacao['fontsize'] = 12;
+        }
+
+        $sala->update($dadosAtualizacao);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Posição da sala atualizada com sucesso!'
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Sala vinculada à planta com sucesso!');
     }
 
     public function unmark(Sala $sala)

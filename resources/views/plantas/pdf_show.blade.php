@@ -169,7 +169,10 @@
         </tbody>
         <tfoot>
             <tr style="background-color: #333; color: #fff;">
-                <td colspan="4" class="text-end fw-bold">Comprimento Total da Planta:</td>
+                <td colspan="2" class="fw-bold">
+                    Total de Pontos: {{ $markers->count() }}
+                </td>
+                <td colspan="2" class="text-end fw-bold">Comprimento Total da Planta:</td>
                 <td class="text-end fw-bold">
                     {{ number_format($markers->sum('tamanho'), 2, ',', '.') }} m
                 </td>

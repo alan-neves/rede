@@ -503,21 +503,32 @@
     }, { passive: false });
 
     // Previne zoom através da roda do mouse segurando Ctrl (Ctrl + Scroll)
+    // Bloqueio de Zoom do Navegador (Teclado e Roda do Mouse)
+    window.addEventListener('keydown', function (e) {
+        // Verifica se Ctrl (Windows/Linux) ou Cmd (Mac) está pressionado
+        if (e.ctrlKey || e.metaKey) {
+            const key = e.key;
+            const code = e.code;
+
+            // Combinações de Zoom In (+ / =), Zoom Out (- / _) e Reset (0)
+            if (
+                key === '+' || key === '=' || 
+                key === '-' || key === '_' || 
+                key === '0' ||
+                code === 'NumpadAdd' || 
+                code === 'NumpadSubtract' ||
+                code === 'Minus' || 
+                code === 'Equal' || 
+                code === 'Digit0'
+            ) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }
+    }, true); // O 'true' ativa o evento no modo Captura, garantindo prioridade total
+
     window.addEventListener('wheel', function (e) {
-        if (e.ctrlKey) {
-            e.preventDefault();
-        }
-    }, { passive: false });
-
-    // Previne zoom por gesto de pinça em touchpads / telas touch
-    window.addEventListener('touchstart', function (e) {
-        if (e.touches.length > 1) {
-            e.preventDefault();
-        }
-    }, { passive: false });
-
-    window.addEventListener('touchmove', function (e) {
-        if (e.touches.length > 1) {
+        if (e.ctrlKey || e.metaKey) {
             e.preventDefault();
         }
     }, { passive: false });

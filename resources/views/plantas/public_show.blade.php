@@ -103,9 +103,13 @@
                         @endforelse
                     </tbody>
                     <!-- Rodapé da Tabela com a Soma dos Comprimentos -->
+                    <!-- Rodapé da Tabela com Total de Pontos e Soma dos Comprimentos -->
                     <tfoot class="table-dark">
                         <tr>
-                            <td colspan="3" class="text-end fw-bold">Comprimento Total de Cabeamento:</td>
+                            <td colspan="2" class="fw-bold">
+                                Total de Pontos: <span class="badge bg-light text-dark ms-1">{{ $markers->count() }}</span>
+                            </td>
+                            <td class="text-end fw-bold">Comprimento Total de Cabeamento:</td>
                             <td class="fw-bold fs-6">
                                 {{ number_format($markers->sum('tamanho'), 2, ',', '.') }} m
                             </td>
