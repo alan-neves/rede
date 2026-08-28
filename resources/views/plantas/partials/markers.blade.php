@@ -6,23 +6,25 @@
         
         $tooltipText = !empty($marker->comentario) ? $nomeFormatado . ' — ' . $marker->comentario : $nomeFormatado;
 
-        // Ajusta a direção e aplica margens negativas para puxar o texto contra o ícone
+        // Mapeamento dinâmico do container (direção) e do estilo do texto (orientação vertical)
         switch($labelPosition) {
             case 'left':
                 $flexStyles = 'flex-direction: row-reverse;';
-                $textStyles = 'margin-right: -1px;';
+                $textStyles = '';
                 break;
             case 'top':
                 $flexStyles = 'flex-direction: column-reverse;';
-                $textStyles = 'writing-mode: vertical-rl; transform: rotate(180deg); margin-bottom: -1px;';
+                // Deixa o texto na vertical orientado de cima para baixo
+                $textStyles = 'writing-mode: vertical-rl; transform: rotate(180deg);';
                 break;
             case 'bottom':
                 $flexStyles = 'flex-direction: column;';
-                $textStyles = 'writing-mode: vertical-rl; transform: rotate(180deg); margin-top: -1px;';
+                // Deixa o texto na vertical orientado de cima para baixo
+                $textStyles = 'writing-mode: vertical-rl; transform: rotate(180deg);';
                 break;
             default: // right
                 $flexStyles = 'flex-direction: row;';
-                $textStyles = 'margin-left: -1px;';
+                $textStyles = '';
                 break;
         }
     @endphp
@@ -44,8 +46,8 @@
             <polygon points="50,15 90,85 10,85" fill="#ef4444" stroke="#ffffff" stroke-width="8" />
         </svg>
         
-        <!-- Texto sobrepondo levemente a borda do ícone -->
-        <span style="color: #1e293b; font-size: {{ $size }}px; line-height: 0.75; padding: 0; white-space: nowrap; font-weight: 700; pointer-events: none; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; {{ $textStyles }}">
+        <!-- Texto com rotação vertical condicional -->
+        <span style="color: #1e293b; font-size: {{ $size }}px; line-height: 0.85; margin: 0; padding: 0; white-space: nowrap; font-weight: 700; pointer-events: none; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; {{ $textStyles }}">
             {{ $nomeFormatado }}
         </span>
     </div>
