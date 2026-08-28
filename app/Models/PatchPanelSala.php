@@ -20,6 +20,7 @@ protected $fillable = [
         'tamanho',
         'planta_id',
         'fontsize',
+        'label_position'
     ];
 
     public function tipoPorta()

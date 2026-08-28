@@ -109,6 +109,7 @@ class PlantaController extends Controller
             'x'                   => 'required|numeric',
             'y'                   => 'required|numeric',
             'fontsize'            => 'nullable|integer|min:2|max:50',
+            'label_position'      => 'nullable|in:left,right,top,bottom',
         ]);
 
         $ponto = PatchPanelSala::findOrFail($validated['patch_panel_sala_id']);
@@ -132,6 +133,9 @@ class PlantaController extends Controller
         }
         if ($request->has('tamanho')) {
             $dadosParaAtualizar['tamanho'] = $request->tamanho;
+        }
+        if ($request->filled('label_position')) {
+            $dadosParaAtualizar['label_position'] = $request->label_position;
         }
 
         // Executa a atualização sem alterar os dados não enviados

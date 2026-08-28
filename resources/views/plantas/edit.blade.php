@@ -52,14 +52,15 @@
                 <select name="patch_panel_sala_id" id="patch_panel_sala_id" style="width: 100%; padding: 5px; font-size: 12px;">
                     <option value="">-- Selecione --</option>
                     @foreach($pontosSemMarcacao as $ponto)
-                        <option value="{{ $ponto->id }}"
-                                data-tipo="{{ $ponto->tipo_porta_id }}"
-                                data-comentario="{{ $ponto->comentario }}"
-                                data-tamanho="{{ $ponto->tamanho }}"
-                                data-fontsize="{{ $ponto->fontsize ?? 12 }}">
-                            {{ optional(optional($ponto->patchPanel)->rack)->nome }}-{{ optional($ponto->patchPanel)->nome }}-{{ $ponto->porta }} 
-                            @if($ponto->sala) ({{ $ponto->sala->nome }}) @endif
-                        </option>
+                    <option value="{{ $ponto->id }}"
+                            data-tipo="{{ $ponto->tipo_porta_id }}"
+                            data-comentario="{{ $ponto->comentario }}"
+                            data-tamanho="{{ $ponto->tamanho }}"
+                            data-fontsize="{{ $ponto->fontsize ?? 12 }}"
+                            data-labelposition="{{ $ponto->label_position ?? 'right' }}">
+                        {{ optional(optional($ponto->patchPanel)->rack)->nome }}-{{ optional($ponto->patchPanel)->nome }}-{{ $ponto->porta }} 
+                        @if($ponto->sala) ({{ $ponto->sala->nome }}) @endif
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -102,6 +103,17 @@
             <div style="margin-bottom: 12px;">
                 <label style="display: block; font-size: 11px; margin-bottom: 2px;">Tamanho da Fonte (px):</label>
                 <input type="number" name="fontsize" id="inputFontsize" value="12" min="2" max="40" required style="width: 100%; padding: 5px; box-sizing: border-box; font-size: 12px;">
+            </div>
+
+            <!-- Posição da Legenda -->
+            <div style="margin-bottom: 12px;">
+                <label for="label_position" style="display: block; font-size: 11px; margin-bottom: 2px;">Posição da Legenda:</label>
+                <select name="label_position" id="label_position" required style="width: 100%; padding: 5px; font-size: 12px;">
+                    <option value="right">Direita</option>
+                    <option value="left">Esquerda</option>
+                    <option value="top">Acima</option>
+                    <option value="bottom">Abaixo</option>
+                </select>
             </div>
 
             <!-- Ações do Formulário principal -->
@@ -242,6 +254,13 @@
         if (document.getElementById('inputFontsize')) {
             document.getElementById('inputFontsize').value = marker.dataset.fontsize || '12';
         }
+        if (document.getElementById('label_position')) {
+            const labelPos = marker.dataset.labelPosition 
+                        || marker.dataset.labelposition 
+                        || marker.getAttribute('data-label-position') 
+                        || 'right';
+            document.getElementById('label_position').value = labelPos;
+        }
 
         // Configura rota de remoção
         deleteForm.action = `/plantas/${markerId}/unmark`;
@@ -307,6 +326,7 @@
 
             marker.addEventListener('pointerdown', function(e) {
                 e.stopPropagation(); // Impede que o panzoom arraste o mapa
+                e.preventDefault();  // Evita a seleção de texto nativa do navegador que bloqueia o drag
 
                 const currentMarker = this;
                 let isMove = false;
@@ -406,11 +426,15 @@
                 const comentario = selectedOption.getAttribute('data-comentario') || '';
                 const tamanho = selectedOption.getAttribute('data-tamanho') || '';
                 const fontsize = selectedOption.getAttribute('data-fontsize') || '12';
+                const labelPosition = selectedOption.getAttribute('data-labelposition') 
+                                || selectedOption.getAttribute('data-label-position') 
+                                || 'right';
 
                 if (document.getElementById('tipo_porta_id')) document.getElementById('tipo_porta_id').value = tipo;
                 if (document.getElementById('comentario')) document.getElementById('comentario').value = comentario;
                 if (document.getElementById('tamanho')) document.getElementById('tamanho').value = tamanho;
                 if (document.getElementById('inputFontsize')) document.getElementById('inputFontsize').value = fontsize;
+                if (document.getElementById('label_position')) document.getElementById('label_position').value = labelPosition;
             } else {
                 limparCamposFormulario();
             }
@@ -429,11 +453,13 @@
         const inputComentario = document.getElementById('comentario');
         const inputTamanho = document.getElementById('tamanho');
         const inputFontsize = document.getElementById('inputFontsize');
+        const selectLabelPosition = document.getElementById('label_position');
 
         if (selectTipo) selectTipo.value = '';
         if (inputComentario) inputComentario.value = '';
         if (inputTamanho) inputTamanho.value = '';
         if (inputFontsize) inputFontsize.value = '12';
+        if (selectLabelPosition) selectLabelPosition.value = 'right';
     }
 
     function closeForm() {
