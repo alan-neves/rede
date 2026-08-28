@@ -25,6 +25,9 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span class="fw-bold text-secondary">{{ $planta->name }}</span>
                     <div>
+                        <a href="/plantas/public/{{$planta->id}}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit"></i> Ver Planta
+                        </a>
                         <a href="/plantas/{{$planta->id}}/edit" class="btn btn-primary btn-sm">
                             <i class="fas fa-edit"></i> Editar Planta
                         </a>

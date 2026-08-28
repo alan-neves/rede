@@ -8,7 +8,7 @@ class PatchPanelSala extends Pivot
 {
     protected $table = 'patch_panel_sala';
 
-protected $fillable = [
+    protected $fillable = [
         'patch_panel_id',
         'sala_id',
         'porta',
@@ -20,7 +20,12 @@ protected $fillable = [
         'tamanho',
         'planta_id',
         'fontsize',
-        'label_position'
+        'label_position',
+        'visible'
+    ];
+
+    protected $casts = [
+        'visible' => 'boolean',
     ];
 
     public function tipoPorta()

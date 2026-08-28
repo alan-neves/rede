@@ -24,7 +24,8 @@ class PatchPanelRequest extends FormRequest
         $rules = [
             'nome' => 'required|string|max:255',
             'rack_id' => 'required|exists:racks,id',
-            'qtde_portas' => 'required|integer|min:1'
+            'qtde_portas' => 'required|integer|min:1',
+            'visible' => 'nullable|boolean',
         ];
         
         return $rules;

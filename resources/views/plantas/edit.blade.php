@@ -39,7 +39,7 @@
             </div>
 
             <!-- Campo: Tornar Planta Pública -->
-            <div class="mb-3">
+            <div class="mb-4">
                 <div class="form-check form-switch">
                     <input class="form-check-input" 
                            type="checkbox" 
@@ -55,6 +55,56 @@
                 <div class="form-text">Permite a visualização do mapa e marcadores sem exigência de login.</div>
             </div>
 
+            <hr class="my-4">
+
+            <!-- Seção: Pontos da Planta (Visibilidade) -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold mb-0">Visibilidade dos Pontos Cadastrados</h6>
+                    @if(isset($pontos) && $pontos->count() > 0)
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="selectAllPontos" onchange="toggleSelectAll(this)">
+                            <label class="form-check-label fw-semibold" for="selectAllPontos">
+                                Marcar / Desmarcar Todos
+                            </label>
+                        </div>
+                    @endif
+                </div>
+                <div class="form-text mb-3">Selecione quais pontos desta planta estarão visíveis no mapa.</div>
+
+                @if(isset($pontos) && $pontos->count() > 0)
+                    <div class="border rounded p-3 bg-light" style="max-height: 300px; overflow-y: auto;">
+                        <div class="row g-2">
+                            @foreach($pontos as $ponto)
+                                @php
+                                    $nomePonto = optional(optional($ponto->patchPanel)->rack)->nome . '-' . optional($ponto->patchPanel)->nome . '-' . $ponto->porta;
+                                    if ($ponto->sala) {
+                                        $nomePonto .= ' (' . $ponto->sala->nome . ')';
+                                    }
+                                @endphp
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check bg-white p-2 border rounded">
+                                        <input class="form-check-input ponto-checkbox" 
+                                               type="checkbox" 
+                                               name="pontos_visiveis[]" 
+                                               value="{{ $ponto->id }}" 
+                                               id="ponto_{{ $ponto->id }}"
+                                               {{ old("pontos_visiveis.{$loop->index}", $ponto->visible) ? 'checked' : '' }}>
+                                        <label class="form-check-label text-truncate d-block" for="ponto_{{ $ponto->id }}" title="{{ $nomePonto }}">
+                                            {{ $nomePonto }}
+                                        </label>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <div class="alert alert-warning mb-0" role="alert">
+                        Nenhum ponto marcado para esta planta até o momento.
+                    </div>
+                @endif
+            </div>
+
             <!-- Ações -->
             <div class="d-flex justify-content-between align-items-center">
                 <a href="/plantas/{{ $planta->predio_id }}" class="btn btn-secondary">
@@ -67,4 +117,13 @@
         </form>
     </div>
 </div>
+
+<script>
+    function toggleSelectAll(masterCheckbox) {
+        const checkboxes = document.querySelectorAll('.ponto-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = masterCheckbox.checked;
+        });
+    }
+</script>
 @endsection

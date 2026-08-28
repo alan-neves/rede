@@ -51,30 +51,33 @@ class PlantaController extends Controller
 
     public function edit(Planta $planta)
     {
-        // Se a planta NÃO for pública, exige a autorização do Gate 'admin'
-        if (!$planta->public) {
-            Gate::authorize('admin');
-        }
+        Gate::authorize('admin');
+
+        // Carrega e ordena os pontos marcados nesta planta
+        $pontos = PatchPanelSala::with(['patchPanel.rack', 'sala'])
+            ->where('planta_id', $planta->id)
+            ->get()
+            ->sortBy([
+                fn ($a, $b) => (optional(optional($a->patchPanel)->rack)->nome ?? '') <=> (optional(optional($b->patchPanel)->rack)->nome ?? ''),
+                fn ($a, $b) => (optional($a->patchPanel)->nome ?? '') <=> (optional($b->patchPanel)->nome ?? ''),
+                fn ($a, $b) => ($a->porta ?? 0) <=> ($b->porta ?? 0),
+            ])
+            ->values(); // Reindexa a coleção
 
         return view('plantas.edit', [
             'planta' => $planta,
+            'pontos' => $pontos,
         ]);
     }
 
     public function update(PlantaRequest $request, Planta $planta)
     {
-        // Se a planta NÃO for pública, exige permissão de admin
-        if (!$planta->public) {
-            Gate::authorize('admin');
-        }
+        Gate::authorize('admin');
 
         $planta->name = $request->input('name');
         $planta->predio_id = $request->input('predio_id');
-        
-        // Converte o valor do checkbox/switch para booleano
         $planta->public = $request->boolean('public');
 
-        // Se um novo arquivo SVG foi enviado, remove o antigo e armazena o novo
         if ($request->hasFile('planta')) {
             if ($planta->path && Storage::exists($planta->path)) {
                 Storage::delete($planta->path);
@@ -87,14 +90,52 @@ class PlantaController extends Controller
 
         $planta->save();
 
+        PatchPanelSala::where('planta_id', $planta->id)->update(['visible' => false]);
+
+        $pontosVisiveis = $request->input('pontos_visiveis', []);
+        if (!empty($pontosVisiveis)) {
+            PatchPanelSala::whereIn('id', $pontosVisiveis)
+                ->where('planta_id', $planta->id)
+                ->update(['visible' => true]);
+        }
+
         return redirect("/plantas/{$planta->predio_id}")
-            ->with('success', 'Planta atualizada com sucesso!');
+            ->with('success', 'Planta e permissões dos pontos atualizadas com sucesso!');
     }
 
     public function show(Predio $predio, Planta $planta)
     {
-        Gate::authorize('admin');
+        if (!$planta->public) {
+            Gate::authorize('admin');
+        }
         return Storage::download($planta->path, $planta->original_name);
+    }
+
+    public function showPublic(Planta $planta)
+    {
+        if (!$planta->public) {
+            Gate::authorize('admin');
+        }
+
+        $planta->load('predio');
+
+        // Carrega os pontos visíveis ordenados por Sala e depois por Rack -> Patch Panel -> Porta
+        $markers = PatchPanelSala::where('planta_id', $planta->id)
+            ->where('visible', true)
+            ->with(['patchPanel.rack', 'sala', 'tipoPorta'])
+            ->get()
+            ->sortBy([
+                fn ($a, $b) => (optional($a->sala)->nome ?? '') <=> (optional($b->sala)->nome ?? ''),
+                fn ($a, $b) => (optional(optional($a->patchPanel)->rack)->nome ?? '') <=> (optional(optional($b->patchPanel)->rack)->nome ?? ''),
+                fn ($a, $b) => (optional($a->patchPanel)->nome ?? '') <=> (optional($b->patchPanel)->nome ?? ''),
+                fn ($a, $b) => ($a->porta ?? 0) <=> ($b->porta ?? 0),
+            ])
+            ->values();
+
+        return view('plantas.public_show', [
+            'planta'  => $planta,
+            'markers' => $markers,
+        ]);
     }
 
     public function editMark(Planta $planta)
