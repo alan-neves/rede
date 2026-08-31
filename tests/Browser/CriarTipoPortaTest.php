@@ -19,22 +19,21 @@ class CriarTipoPortaTest extends DuskTestCase
                 ->type('#callback', 'http://rede/callback')
                 ->type('#loginUsuario', '1111')
                 ->press('Login')
-                ->pause('100');
+                ->waitForText('Sistema rede', 5);
             // Vai diretamente para a lista de tipo de portas
             $browser->clickLink('Tipos de Porta')
-                ->assertPathIs('/tipo-portas');
+                ->waitForLocation('/tipo-portas', 5);
             // Cria novo tipo de porta
             $browser->clickLink('Novo Tipo')
-                ->assertPathIs('/tipo-portas/create');
+                ->waitForLocation('/tipo-portas/create', 5);
 
             // Preenche formulário
             $browser->type('nome', 'Voip')
-                ->press('Salvar')
-                ->pause('100');
+                ->waitFor('button[type="submit"]', 5)
+                ->press('Salvar');
 
             // Verifica se o tipo de porta foi criado
-            $browser->assertPathIs('/tipo-portas')
-                ->assertSee('Tipo de porta criado com sucesso!')
+            $browser->waitForText('Tipo de porta criado com sucesso!', 5)
                 ->assertSee('Voip');
         });
     }

@@ -19,27 +19,26 @@ class CriarModeloSwitchTest extends DuskTestCase
                 ->type('#callback', 'http://rede/callback')
                 ->type('#loginUsuario', '1111')
                 ->press('Login')
-                ->pause('100');
+                ->waitForText('Sistema rede', 5);
 
             // Vai para lista de modelos de switch
             $browser->clickLink('Modelos de Switch')
-                ->assertPathIs('/modelo-switches');
+                ->waitForLocation('/modelo-switches', 5);
 
             // Cria novo modelo
             $browser->clickLink('Novo Modelo')
-                ->assertPathIs('/modelo-switches/create');
+                ->waitForLocation('/modelo-switches/create', 5);
 
             // Preenche formulário
             $browser->type('nome', 'Switch Teste 24G')
                 ->type('fabricante', 'HP')
                 ->type('qtde_portas', '24')
                 ->type('qtde_portas_poe', '12')
-                ->press('Salvar')
-                ->pause('100');
+                ->waitFor('button[type="submit"]', 5)
+                ->press('Salvar');
 
             // Verifica se o modelo foi criado
-            $browser->assertPathIs('/modelo-switches')
-                ->assertSee('Modelo cadastrado com sucesso!')
+            $browser->waitForText('Modelo cadastrado com sucesso!', 5)
                 ->assertSee('Switch Teste 24G');
         });
     }

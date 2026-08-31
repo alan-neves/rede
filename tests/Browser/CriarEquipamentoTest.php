@@ -19,31 +19,32 @@ class CriarEquipamentoTest extends DuskTestCase
                 ->type('#callback', 'http://rede/callback')
                 ->type('#loginUsuario', '1111')
                 ->press('Login')
-                ->pause('100');
+                ->waitForText('Sistema rede', 5);
 
             // Vai para lista de prédios
             $browser->clickLink('Prédios')
-                ->assertPathIs('/predios')
+                ->waitForLocation('/predios', 5)
                 ->clickLink('Ver');
 
             // Entra no primeiro rack
-            $browser->click('a[href="/racks/1"]')
-                ->assertPathIs('/racks/1');
+            $browser->waitFor('a[href="/racks/1"]', 5)
+                ->click('a[href="/racks/1"]')
+                ->waitForLocation('/racks/1', 5);
 
-            // Clica no botão "Novo" dos equipamentos (seletor CSS pelo href)
+            // Clica no botão "Novo" dos equipamentos
             $browser->click('a[href="/equipamentos/create?rack_id=1"]')
-                ->assertPathIs('/equipamentos/create');
+                ->waitForLocation('/equipamentos/create', 5);
 
             // Preenche formulário
             $browser->select('modelo_switch_id', '1')
                 ->type('hostname', 'SW-TESTE-01')
                 ->type('ip', '192.168.1.100')
                 ->select('tipo', 'A')
-                ->press('Salvar')
-                ->pause('100');
+                ->waitFor('button[type="submit"]', 5)
+                ->press('Salvar');
 
             // Verifica se o equipamento foi criado
-            $browser->assertSee('Equipamento criado com sucesso!')
+            $browser->waitForText('Equipamento criado com sucesso!', 5)
                 ->assertSee('SW-TESTE-01');
         });
     }

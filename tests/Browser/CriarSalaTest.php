@@ -19,21 +19,23 @@ class CriarSalaTest extends DuskTestCase
                 ->type('#callback', 'http://rede/callback')
                 ->type('#loginUsuario', '1111')
                 ->press('Login')
-                ->pause('100');
+                ->waitForText('Sistema rede', 5);
             // Vai diretamente para a lista de prédios
             $browser->clickLink('Prédios')
-                ->assertPathIs('/predios')
-                ->clickLink('Ver');
+                ->waitForLocation('/predios', 5)
+                ->clickLink('Ver')
+                ->waitFor('a[href="/salas/create?predio_id=1"]', 5);
 
             // Clica no link para criar nova sala
             $browser->clickLink('Novo Local/Sala')
-                ->assertPathIs('/salas/create');
+                ->waitForLocation('/salas/create', 5);
             // Preenche formulário
             $browser->type('nome', 'Sala Teste 101')
+                ->waitFor('button[type="submit"]', 5)
                 ->press('Salvar')
                 ->pause('100');
             // Verifica se a sala foi criada
-            $browser->assertSee('Sala criada com sucesso!')
+            $browser->waitForText('Sala criada com sucesso!', 5)
                 ->assertSee('Sala Teste 101');
         });
     }

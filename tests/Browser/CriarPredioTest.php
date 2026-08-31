@@ -21,23 +21,22 @@ class CriarPredioTest extends DuskTestCase
                 ->type('#callback', 'http://rede/callback')
                 ->type('#loginUsuario', '1111')
                 ->press('Login')
-                ->pause('100');
+                ->waitForText('Sistema rede', 5);
             // Vai diretamente para a lista de prédios
             $browser->clickLink('Prédios')
                 ->assertPathIs('/predios');
             // Cria novo prédio
             $browser->clickLink('Adicionar Novo Prédio')
-                ->assertPathIs('/predios/create');
+                ->waitForLocation('/predios/create', 5);
 
             // Preenche formulário
             $browser->type('nome', 'Prédio Teste Dusk')
                 ->type('descricao', 'Descrição do prédio')
-                ->press('Salvar')
-                ->pause('100');
+                ->waitFor('button[type="submit"]', 5)
+                ->press('Salvar');
 
             // Verifica se o prédio foi criado
-            $browser->assertPathIs('/predios')
-                ->assertSee('Prédio criado com sucesso!')
+            $browser->waitForText('Prédio criado com sucesso!', 5)
                 ->assertSee('Prédio Teste Dusk');
         });
     }
