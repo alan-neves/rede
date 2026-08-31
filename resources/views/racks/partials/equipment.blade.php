@@ -24,14 +24,14 @@
 </style>
 
 <div class="equipment-tooltip" id="equipment-tooltip"></div>
-<svg id="equipment-rack" width="100%" height="{{ $rack->equipamentos->count() * 200 }}"></svg>
+<svg id="equipment-rack" width="100%" height="{{ $rack->equipamentos->sum(fn($e) => ceil(($e->modeloSwitch?->qtde_portas ?? 24)/24) * 70 + 30) + 50 }}"></svg>
 
 <script>
     const equipmentSvg = d3.select("#equipment-rack");
     const equipmentTooltip = d3.select("#equipment-tooltip");
 
     function drawEquipment(svg, x, y, hostname, model, id, totalPorts) {
-        const equipmentWidth = 550;
+        const equipmentWidth = 480;
         const equipmentHeight = Math.ceil(totalPorts/24) * 40;
         const portsPerRow = 24;
 
@@ -73,10 +73,10 @@
             .data(ports)
             .enter()
             .append("rect")
-            .attr("x", (d, i) => x + 10 + (i % portsPerRow) * 22)
+            .attr("x", (d, i) => x + 10 + (i % portsPerRow) * 19)
             .attr("y", (d, i) => y + 10 + Math.floor(i / portsPerRow) * 40)
-            .attr("width", 20)
-            .attr("height", 20)
+            .attr("width", 18)
+            .attr("height", 18)
             .attr("fill", d => (portas_ocupadas_int.includes(d) ? "green" : "gray"))
             .attr("class", "equipment-port")
             .on("mouseover", function(event, d) {
@@ -96,8 +96,8 @@
             .data(ports)
             .enter()
             .append("text")
-            .attr("x", (d, i) => x + 20 + (i % portsPerRow) * 22)
-            .attr("y", (d, i) => y + 25 + Math.floor(i / portsPerRow) * 40)
+            .attr("x", (d, i) => x + 19 + (i % portsPerRow) * 19)
+            .attr("y", (d, i) => y + 23 + Math.floor(i / portsPerRow) * 40)
             .attr("text-anchor", "middle")
             .attr("alignment-baseline", "middle")
             .attr("font-size", "8px")
@@ -116,34 +116,34 @@
         .enter()
         .append("g")
         .attr("class", "equipment-legend")
-        .attr("transform", (d, i) => `translate(650, ${80 + i * 25})`);
+        .attr("transform", (d, i) => `translate(400, ${30 + i * 25})`);
 
     equipmentLegend.append("rect")
-        .attr("width", 18)
-        .attr("height", 18)
+        .attr("width", 14)
+        .attr("height", 14)
         .attr("fill", d => d.color)
         .attr("stroke", "black");
 
     equipmentLegend.append("text")
-        .attr("x", 25)
-        .attr("y", 12)
+        .attr("x", 20)
+        .attr("y", 11)
         .text(d => d.text);
 
     // Desenhar equipamentos
     @php $equipmentY = 50; @endphp
-    @foreach($rack->equipamentos->sortBy('hostname') as $equipamento)
+    @foreach($rack->equipamentos as $equipamento)
+        @php $portCount = $equipamento->modeloSwitch?->qtde_portas ?? 24; @endphp
         drawEquipment(
             equipmentSvg, 
-            50, 
+            20, 
             {{ $equipmentY }}, 
             '{{ $equipamento->hostname }}', 
-            '{{ $equipamento->model }}', 
+            '{{ $equipamento->modeloSwitch?->nome ?? 'Sem modelo' }}', 
             {{ $equipamento->id }}, 
-            {{ $equipamento->qtde_portas ?? 24 }} // Fallback para 24 portas se não tiver definido
+            {{ $portCount }}
         );
         
         @php 
-            $portCount = $equipamento->qtde_portas ?? 24;
             $equipmentY += ceil($portCount/24) * 70 + 30; // Espaço extra entre equipamentos
         @endphp
     @endforeach

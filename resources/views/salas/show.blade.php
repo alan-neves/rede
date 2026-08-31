@@ -21,12 +21,7 @@
     </div>
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Portas Vinculadas</h3>
-            @can('user')
-            <a href="/salas/{{ $sala->id }}/selecionar-rack" class="btn btn-success">
-                <i class="fas fa-link"></i> Vincular a uma Porta
-            </a>
-            @endcan
+            <h3>Portas Vinculadas Neste Local/Sala</h3>
         </div>
         
         @if($patchPanels->isEmpty())
@@ -41,7 +36,6 @@
                             <th>Prédio</th>
                             <th>Porta</th>
                             <th>Tipo de Porta</th> 
-                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -60,23 +54,6 @@
                                 @else
                                     -
                                 @endif
-                            </td>
-                            <td>
-                                @can('user')
-                                    <div class="btn-group" role="group">
-                                        <a href="/salas/{{ $sala->id }}/editar-tipo-porta/{{ $pp->id }}?porta={{ $pp->pivot->porta }}" 
-                                        class="btn btn-warning btn-sm">
-                                            Editar tipo de porta
-                                        </a>
-                                        <form action="/salas/{{ $sala->id }}/desvincular-patchpanel/{{ $pp->id }}?porta={{ $pp->pivot->porta }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja desvincular esta porta?')">
-                                                Desvincular
-                                            </button>
-                                        </form>
-                                    </div>
-                                @endcan
                             </td>
                         </tr>
                         @endforeach

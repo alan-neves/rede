@@ -24,14 +24,14 @@
 </style>
 
 <div class="tooltip" id="tooltip"></div>
-<svg id="rack" width="100%" height="{{ $rack->patchPanels->count()*170}}"></svg>
+<svg id="rack" width="100%" height="{{ $rack->patchPanels->sum(fn($p) => ceil($p->qtde_portas/24)*70) + 50 }}"></svg>
 
 <script>
     const svg = d3.select("#rack");
     const tooltip = d3.select("#tooltip");
 
     function drawPatchPanel(svg, x, y, panelLabel, id, totalPorts, portas_habilitadas) {
-      const panelWidth = 550;
+      const panelWidth = 480;
       const panelHeight = Math.ceil(totalPorts/24)*40 ; // quantidade de U's no rack
       const portsPerRow = 24;
 
@@ -67,10 +67,10 @@
         .data(ports)
         .enter()
         .append("rect")
-        .attr("x", (d, i) => x + 10 + (i % portsPerRow) * 22)
+        .attr("x", (d, i) => x + 10 + (i % portsPerRow) * 19)
         .attr("y", (d, i) => y + 10 + Math.floor(i / portsPerRow) * 40)
-        .attr("width", 20)
-        .attr("height", 20)
+        .attr("width", 18)
+        .attr("height", 18)
         .attr("fill", d => (portas_habilitadas_int.includes(d) ? "green" : "gray"))
         .attr("class", "port")
         .on("mouseover", function(event, d) {
@@ -89,8 +89,8 @@
         .data(ports)
         .enter()
         .append("text")
-        .attr("x", (d, i) => x + 20 + (i % portsPerRow) * 22)
-        .attr("y", (d, i) => y + 25 + Math.floor(i / portsPerRow) * 40)
+        .attr("x", (d, i) => x + 19 + (i % portsPerRow) * 19)
+        .attr("y", (d, i) => y + 23 + Math.floor(i / portsPerRow) * 40)
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "middle")
         .attr("font-size", "8px")
@@ -109,21 +109,21 @@
       .enter()
       .append("g")
       .attr("class", "legend")
-      .attr("transform", (d, i) => `translate(650,${80 + i * 25})`);
+      .attr("transform", (d, i) => `translate(400,${30 + i * 25})`);
 
     legend.append("rect")
-      .attr("width", 18)
-      .attr("height", 18)
+      .attr("width", 14)
+      .attr("height", 14)
       .attr("fill", d => d.color)
       .attr("stroke", "black");
 
     legend.append("text")
-      .attr("x", 25)
-      .attr("y", 12)
+      .attr("x", 20)
+      .attr("y", 11)
       .text(d => d.text);
 
     @php $y = 50; @endphp
-    @foreach($rack->patchPanels->sortBy('nome') as $patchPanel)
+    @foreach($rack->patchPanels as $patchPanel)
         // pegando portas habilitadas
         @php
         $portas_habilitadas = [];
@@ -132,7 +132,7 @@
           }
         @endphp
 
-        drawPatchPanel(svg, 50, {{$y}}, '{{ $patchPanel->nome }}', {{$patchPanel->id}}, {{ $patchPanel->qtde_portas }}, @json($portas_habilitadas) );
+        drawPatchPanel(svg, 20, {{$y}}, '{{ $patchPanel->nome }}', {{$patchPanel->id}}, {{ $patchPanel->qtde_portas }}, @json($portas_habilitadas) );
         
         @php $y += ceil($patchPanel->qtde_portas/24)*70; @endphp
     @endforeach
