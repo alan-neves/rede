@@ -12,6 +12,11 @@ $menu = [
         'url' => config('app.url') . '/tipo-portas',
         'can' => 'admin',
     ],
+    [
+        'text' => '<i class="fas fa-microchip"></i> Modelos de Switches',
+        'url' => config('app.url') . '/modelo-switches',
+        'can' => 'admin',
+    ],
 ];
 
 $right_menu = [

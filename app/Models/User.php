@@ -13,7 +13,6 @@ class User extends Authenticatable
 {
     use \Spatie\Permission\Traits\HasRoles;
     use HasFactory, Notifiable, HasRoles, HasSenhaunica;
-
     /**
      * The attributes that are mass assignable.
      *

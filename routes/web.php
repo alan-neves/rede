@@ -9,8 +9,18 @@ use App\Http\Controllers\RackController;
 use App\Http\Controllers\PatchPanelController;
 use App\Http\Controllers\TipoPortaController; 
 use App\Http\Controllers\PlantaController; 
+use App\Http\Controllers\ModeloSwitchController; 
 
 Route::get('/',[IndexController::class,'index']);
+
+// Modelos de Switch (novo)
+Route::get('/modelo-switches', [ModeloSwitchController::class, 'index']);
+Route::get('/modelo-switches/create', [ModeloSwitchController::class, 'create']);
+Route::post('/modelo-switches', [ModeloSwitchController::class, 'store']);
+Route::get('/modelo-switches/{modeloSwitch}', [ModeloSwitchController::class, 'show']);
+Route::get('/modelo-switches/{modeloSwitch}/edit', [ModeloSwitchController::class, 'edit']);
+Route::put('/modelo-switches/{modeloSwitch}', [ModeloSwitchController::class, 'update']);
+Route::delete('/modelo-switches/{modeloSwitch}', [ModeloSwitchController::class, 'destroy']);
 
 // Prédios
 Route::get('/predios', [PredioController::class, 'index']);
@@ -43,6 +53,7 @@ Route::get('/racks/{rack}', [RackController::class, 'show']);
 Route::get('/racks/{rack}/edit', [RackController::class, 'edit']);
 Route::put('/racks/{rack}', [RackController::class, 'update']);
 Route::delete('/racks/{rack}', [RackController::class, 'destroy']);
+Route::post('/racks/{rack}/reordenar', [RackController::class, 'reordenar']);
 
 // Patch Panels
 Route::get('/patch-panels/create', [PatchPanelController::class, 'create']);
@@ -91,13 +102,3 @@ Route::delete('/patch-panels/{patchPanel}/desvincular-sala/{sala}', [PatchPanelC
 // Editar tipo de porta patch panels
 Route::get('/patch-panels/{patchPanel}/editar-tipo-porta/{sala}', [PatchPanelController::class, 'editarTipoPorta']);
 Route::put('/patch-panels/{patchPanel}/atualizar-tipo-porta/{sala}', [PatchPanelController::class, 'atualizarTipoPorta']);
-
-// Vincular salas a patch panels
-Route::get('/salas/{sala}/selecionar-rack', [SalaController::class, 'selecionarRack']);
-Route::get('/salas/{sala}/selecionar-patchpanel/{rack}', [SalaController::class, 'selecionarPatchPanel']);
-Route::post('/salas/{sala}/vincular-patchpanel', [SalaController::class, 'vincularPatchPanel']); 
-Route::delete('/salas/{sala}/desvincular-patchpanel/{patchPanel}', [SalaController::class, 'desvincularPatchPanel']);
-
-// Editar tipo de porta sakas 
-Route::get('/salas/{sala}/editar-tipo-porta/{patchPanel}', [SalaController::class, 'editarTipoPorta']);
-Route::put('/salas/{sala}/atualizar-tipo-porta/{patchPanel}', [SalaController::class, 'atualizarTipoPorta']);

@@ -17,14 +17,16 @@ class EquipamentoController extends Controller
 
         // Validação dos campos
         $validated = $request->validate([
-            'hostname' => 'required',
-            'model' => 'required',
+            'hostname' => 'required|string|max:255',
             'ip' => 'required|ip',
-            'qtde_portas' => 'required|integer|min:1|max:48',
             'rack_id' => 'required|exists:racks,id',
+            'modelo_switch_id' => 'required|exists:modelo_switches,id',
+            'tipo' => 'required|in:A,W,C,V',
+            'comentario' => 'nullable|string',
             'user_id' => 'required|exists:users,id',
-            'poe_type' => 'boolean'
         ]);
+
+        $validated['ordem'] = Equipamento::where('rack_id', $validated['rack_id'])->max('ordem') + 1;
 
         $equipamento = Equipamento::updateOrCreate(
             ['hostname' => $validated['hostname']],
@@ -33,7 +35,7 @@ class EquipamentoController extends Controller
 
         return response()->json([
             'message' => 'Equipamento criado/atualizado com sucesso',
-            'equipamento' => $equipamento
+            'equipamento' => $equipamento->load('modeloSwitch')
         ], 201);
     }
 }

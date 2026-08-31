@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             PortaSeeder::class,
             SnapshotSeeder::class,
             MacSeeder::class,
+            ModeloSwitchSeeder::class,
         ]);
     }
 }
