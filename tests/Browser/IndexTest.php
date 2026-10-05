@@ -15,7 +15,7 @@ class IndexTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
-                ->assertSee('Sistema rede');
+                ->assertSee('Rede');
         });
     }
 }

@@ -19,7 +19,7 @@ class LoginTest extends DuskTestCase
                 ->type('#callback', 'http://rede/callback')
                 ->type('#loginUsuario', '1111')
                 ->press('Login')
-                ->waitForText('Sistema rede')
+                ->waitForText('Rede')
                 ->assertSee('Sair');
         });
     }
