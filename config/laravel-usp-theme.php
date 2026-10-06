@@ -3,7 +3,12 @@
 
 $menu = [
     [
-        'text' => '<i class="fas fa-home"></i> Prédios',
+        'text' => '<i class="fas fa-home"></i> Home',
+        'url' => config('app.url') . '/',
+        'can' => 'user',
+    ],
+    [
+        'text' => '<i class="fas fa-building"></i> Prédios',
         'url' => config('app.url') . '/predios',
         'can' => 'admin',
     ],

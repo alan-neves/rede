@@ -54,9 +54,11 @@
                                         </td>
                                         <td>
                                             <div class="d-flex gap-2">
+                                                @can('admin')
                                                 <a href="{{ route('equipamentos.show', ['equipamento' => $equipamento]) }}" class="btn btn-info btn-sm">
                                                     Ver
                                                 </a>
+                                                @endcan
                                                 <a href="{{ route('equipamentos.edit', ['equipamento' => $equipamento]) }}" class="btn btn-warning btn-sm">
                                                     Editar
                                                 </a>

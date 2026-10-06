@@ -19,7 +19,7 @@ class CriarModeloSwitchTest extends DuskTestCase
                 ->type('#callback', 'http://rede/callback')
                 ->type('#loginUsuario', '1111')
                 ->press('Login')
-                ->waitForText('Sistema rede', 5);
+                ->waitForText('Rede', 5);
 
             // Vai para lista de modelos de switch
             $browser->clickLink('Modelos de Switch')

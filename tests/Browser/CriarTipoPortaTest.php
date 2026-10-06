@@ -19,7 +19,7 @@ class CriarTipoPortaTest extends DuskTestCase
                 ->type('#callback', 'http://rede/callback')
                 ->type('#loginUsuario', '1111')
                 ->press('Login')
-                ->waitForText('Sistema rede', 5);
+                ->waitForText('Rede', 5);
             // Vai diretamente para a lista de tipo de portas
             $browser->clickLink('Tipos de Porta')
                 ->waitForLocation('/tipo-portas', 5);
