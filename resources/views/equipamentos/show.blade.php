@@ -6,7 +6,7 @@
         <span class="h4 mb-0 text-dark">
             <i class="fas fa-network-wired"></i> {{ $equipamento->hostname }}
         </span>
-        <a href="/racks/{{ $equipamento->rack_id }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Voltar</a>
+        <a href="#" onclick="history.back(); return false;" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Voltar</a>
     </div>
     <div class="card-body">
         <div class="row">
